@@ -10,8 +10,6 @@ def index(request):
     return HttpResponse("<h1>Index</h1>")
 
 def list(request):
-    # template = loader.get_template("list.html")
-    # return HttpResponse(template.render())
     invoices = Invoice.objects.all()
     context = {"invoices_list": invoices}
     return render(request, "list.html", context)
@@ -35,8 +33,4 @@ def create(request):
         for key, value in request.POST.items():
             print(key, value)
     return render(request, "405.html", status=405)
-
-
-
-
 

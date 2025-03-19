@@ -23,11 +23,10 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", invoices_views.index, name="index"),
     path("invoices/", invoices_views.list, name="list"),
+    path("invoices/create", invoices_views.create, name="create"),
     path("invoices/<id>", invoices_views.detail, name="detail"),
     path("invoices/report/numbers", invoices_views.report, name="report"),
-    path("invoices/create", invoices_views.create, name="create"),
     path("contacts/", contacts_views.list, name="contacts_list"),
-    path("contacts/<id>", contacts_views.detail, name="contact_detail")
+    path("contacts/<id>", contacts_views.detail, name="contact_detail"),
 ]
-
 

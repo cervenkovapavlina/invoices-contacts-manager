@@ -9,6 +9,3 @@ class Invoice(models.Model):
     created = models.DateTimeField(default=timezone.now)
     variable_symbol = models.CharField(max_length=50)
 
-# python manage.py makemigrations invoices
-# python manage.py migrate
-
