@@ -1,6 +1,7 @@
 from django.test import TestCase
 from .models import NumberRow
 from django.utils import timezone
+from datetime import datetime
 
 class NumberRowTest(TestCase):
     """
@@ -20,7 +21,7 @@ class NumberRowTest(TestCase):
         number_row = NumberRow()
         number_row.save()
         self.assertGreater(number_row.id, 0, "number_row.id > 0")
-        self.assertEqual(number_row.prefix, str(timezone.datetime.year), "number_row.prefix = timezone.datetime.year")
+        self.assertEqual(number_row.prefix, str(datetime.now().year), "number_row.prefix = str(datetime.now().year)")
         self.assertEqual(number_row.order, 1, "number_row.order = 1")
 
     def test_given_prefix(self):

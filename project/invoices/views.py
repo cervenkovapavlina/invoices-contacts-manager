@@ -1,18 +1,24 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
+from django.core import serializers
 import json
 from invoices.models import Invoice
+from invoices.models import NumberRow
+from django.views.decorators.csrf import csrf_exempt
+
 
 # Create your views here.
 
 def index(request):
-    return HttpResponse("<h1>Index</h1>")
+    return HttpResponse(json.dumps({}))
 
-def list(request):
-    invoices = Invoice.objects.all()
-    context = {"invoices_list": invoices}
-    return render(request, "list.html", context)
+def number_row_list(request):
+    number_rows = NumberRow.objects.all().values()
+    data = []
+    for item in number_rows:
+        data.append({"id": item["id"], "prefix": item["prefix"], "order": item["order"]})
+    return HttpResponse(json.dumps(data))
 
 
 def detail(request, id):
@@ -28,9 +34,15 @@ def report(request):
     # numbers = {"number1": 1, "number2": 2, "number3": 3, "number4": 4}
     return HttpResponse(json.dumps(numbers))
 
-def create(request):
+@csrf_exempt
+def number_row_create(request):
     if request.method == "POST":
-        for key, value in request.POST.items():
-            print(key, value)
+        json_data = json.loads(request.body)
+        number_row = NumberRow()
+        number_row.prefix = json_data["prefix"]
+        number_row.save()
+        return HttpResponse(json.dumps(number_row.id))
     return render(request, "405.html", status=405)
+
+
 

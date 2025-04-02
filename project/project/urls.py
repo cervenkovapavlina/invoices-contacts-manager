@@ -21,9 +21,12 @@ import invoices.views as invoices_views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", invoices_views.index, name="index"),
-    path("invoices/", invoices_views.list, name="list"),
-    path("invoices/create", invoices_views.create, name="create"),
+
+    # path("invoices/", invoices_views.list, name="list"),
+    # path("invoices/create", invoices_views.create, name="create"),
     path("invoices/<id>", invoices_views.detail, name="detail"),
-    path("invoices/report/numbers", invoices_views.report, name="report"),
+
+    path("number_rows/", invoices_views.number_row_list, name="number_row_list"),
+    path("number_rows/create", invoices_views.number_row_create, name="number_row_create"),
 ]
 

@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils import timezone
+from datetime import datetime
+
 
 # Create your models here.
 
@@ -16,10 +18,12 @@ class Entity(models.Model):
     deleted_at = models.DateTimeField(default=None, null=True, blank=True)
 
 class NumberRow(Entity):
-    prefix = models.CharField(max_length=20, default=str(timezone.datetime.year))
+    prefix = models.CharField(max_length=20, default=str(datetime.now().year))
     order = models.IntegerField()
     def save(self, *args, **kwargs):
         if self._state.adding:
             last_instance = NumberRow.objects.order_by('-order').first()
             self.order = last_instance.order + 1 if last_instance else 1
         super(NumberRow, self).save(*args, **kwargs)
+
+
