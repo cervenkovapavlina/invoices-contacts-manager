@@ -17,7 +17,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 import invoices.views as invoices_views
-import contacts.views as contacts_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -26,7 +25,5 @@ urlpatterns = [
     path("invoices/create", invoices_views.create, name="create"),
     path("invoices/<id>", invoices_views.detail, name="detail"),
     path("invoices/report/numbers", invoices_views.report, name="report"),
-    path("contacts/", contacts_views.list, name="contacts_list"),
-    path("contacts/<id>", contacts_views.detail, name="contact_detail"),
 ]
 
