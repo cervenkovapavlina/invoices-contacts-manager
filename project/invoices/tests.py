@@ -25,7 +25,12 @@ class NumberRowTest(TestCase):
         self.assertEqual(number_row.order, 1, "number_row.order = 1")
 
     def test_given_prefix(self):
-        pass
+        issued_invoice_number_row = NumberRow(prefix="FV2025")
+        issued_invoice_number_row.save()
+        received_invoice_number_row = NumberRow(prefix="FP2025")
+        received_invoice_number_row.save()
+        self.assertEqual(issued_invoice_number_row.prefix, "FV2025", "issued_invoice_number_row.prefix = FV2025")
+        self.assertEqual(received_invoice_number_row.prefix, "FP2025", "received_invoice_number_row.prefix = FP2025")
 
 
 
