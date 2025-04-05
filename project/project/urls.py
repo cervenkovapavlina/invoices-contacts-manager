@@ -24,9 +24,10 @@ urlpatterns = [
 
     # path("invoices/", invoices_views.list, name="list"),
     # path("invoices/create", invoices_views.create, name="create"),
-    path("invoices/<id>", invoices_views.detail, name="detail"),
+    # path("invoices/<id>", invoices_views.detail, name="detail"),
 
     path("number_rows/", invoices_views.number_row_list, name="number_row_list"),
     path("number_rows/create", invoices_views.number_row_create, name="number_row_create"),
+    path("number_rows/<id>", invoices_views.number_row_detail, name="number_row_detail")
 ]
 

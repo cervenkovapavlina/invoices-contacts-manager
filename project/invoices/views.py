@@ -18,11 +18,11 @@ def number_row_list(request):
     return JsonResponse(serialize('python', NumberRow.objects.all()), safe=False)
 
 
-def detail(request, id):
+def number_row_detail(request, id):
     try:
-        invoice = Invoice.objects.get(id=id)
-        context = {"invoice": invoice}
-        return render(request, "detail.html", context)
+        number_row = NumberRow.objects.get(id=id)
+        data = serialize('python', [number_row])
+        return JsonResponse(data[0], safe=False)
     except:
         return render(request, "404.html", status=404)
 
