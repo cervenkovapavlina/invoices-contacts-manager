@@ -1,4 +1,6 @@
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import UniqueConstraint
 from django.utils import timezone
 from datetime import datetime
 
@@ -17,13 +19,28 @@ class Entity(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     deleted_at = models.DateTimeField(default=None, null=True, blank=True)
 
-class NumberRow(Entity):
-    prefix = models.CharField(max_length=20, default=str(datetime.now().year))
-    order = models.IntegerField()
+
+class NumberRowPrefix(Entity):
+    prefix = models.CharField(max_length=10, default="", unique=False, null=True)
+    year = models.CharField(max_length=4, default=str(datetime.now().year), unique=False, null=False)
+
+    def get_final_prefix(self):
+        return f"{self.prefix}{self.year}"
+
+    def save(self, *args, **kwargs):
+        final_prefix_already_exists = NumberRowPrefix.objects.filter(prefix=self.prefix, year=self.year).count() > 0
+        if final_prefix_already_exists:
+            raise ValidationError("Final prefix already exists.")
+        super(NumberRowPrefix, self).save(*args, **kwargs)
+
+
+class NumberRowValue(Entity):
+    value = models.IntegerField(unique=False, null=False)
+    prefix = models.ForeignKey(NumberRowPrefix, on_delete=models.CASCADE)
+
     def save(self, *args, **kwargs):
         if self._state.adding:
-            last_instance = NumberRow.objects.order_by('-order').first()
-            self.order = last_instance.order + 1 if last_instance else 1
-        super(NumberRow, self).save(*args, **kwargs)
+            self.value = NumberRowValue.objects.filter(prefix=self.prefix).count() + 1
+        super(NumberRowValue, self).save(*args, **kwargs)
 
 

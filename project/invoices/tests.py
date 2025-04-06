@@ -1,7 +1,9 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase
-from .models import NumberRow
+from .models import NumberRowPrefix, NumberRowValue
 from django.utils import timezone
 from datetime import datetime
+
 
 class NumberRowTest(TestCase):
     """
@@ -16,25 +18,58 @@ class NumberRowTest(TestCase):
     def tearDown(self):
         pass
 
+    # def test_default_values(self):
+    #     number_row = NumberRow()
+    #     number_row.save()
+    #     self.assertGreater(number_row.id, 0, "number_row.id > 0")
+    #     self.assertEqual(number_row.prefix, str(datetime.now().year), "number_row.prefix = str(datetime.now().year)")
+    #     self.assertEqual(number_row.value, 1, "number_row.order = 1")
+    #
+    # def test_given_prefix(self):
+    #     issued_invoice_number_row = NumberRow(prefix="FV2025")
+    #     issued_invoice_number_row.save()
+    #     received_invoice_number_row = NumberRow(prefix="FP2025")
+    #     received_invoice_number_row.save()
+    #     self.assertEqual(issued_invoice_number_row.prefix, "FV2025", "issued_invoice_number_row.prefix = FV2025")
+    #     self.assertEqual(received_invoice_number_row.prefix, "FP2025", "received_invoice_number_row.prefix = FP2025")
 
-    def test_default_values(self):
-        number_row = NumberRow()
-        number_row.save()
-        self.assertGreater(number_row.id, 0, "number_row.id > 0")
-        self.assertEqual(number_row.prefix, str(datetime.now().year), "number_row.prefix = str(datetime.now().year)")
-        self.assertEqual(number_row.order, 1, "number_row.order = 1")
+    def test_given_unique_prefix(self):
+        prefix = "FV"
+        number_row_prefix = NumberRowPrefix(prefix=prefix)
+        number_row_prefix.save()
+        unique_exception = False
+        try:
+            number_row_prefix_2 = NumberRowPrefix(prefix=prefix)
+            number_row_prefix_2.save()
+        except ValidationError as e:
+            self.assertEqual("Final prefix already exists.", e.message)
+            unique_exception = True
+        self.assertTrue(unique_exception, "unique_exception = True")
 
-    def test_given_prefix(self):
-        issued_invoice_number_row = NumberRow(prefix="FV2025")
-        issued_invoice_number_row.save()
-        received_invoice_number_row = NumberRow(prefix="FP2025")
-        received_invoice_number_row.save()
-        self.assertEqual(issued_invoice_number_row.prefix, "FV2025", "issued_invoice_number_row.prefix = FV2025")
-        self.assertEqual(received_invoice_number_row.prefix, "FP2025", "received_invoice_number_row.prefix = FP2025")
+    def test_abc(self):
+        # Zalozime dva prefixy
+        issued_invoice_prefix = NumberRowPrefix(prefix="FV")
+        issued_invoice_prefix.save()
+        received_invoice_prefix = NumberRowPrefix(prefix="FP")
+        received_invoice_prefix.save()
+        self.assertEqual(issued_invoice_prefix.get_final_prefix(), f"FV{self.get_current_year()}",
+                         "issued_invoice_prefix.get_final_prefix() = f\"FV{self.get_current_year()}\"")
+        self.assertEqual(received_invoice_prefix.get_final_prefix(), f"FP{self.get_current_year()}",
+                         "received_invoice_prefix.get_final_prefix() = f\"FP{self.get_current_year()}\"")
+        # Pro prvni prefix zalozime dve values
+        first_issued_invoice_value = NumberRowValue(prefix=issued_invoice_prefix)
+        first_issued_invoice_value.save()
+        second_issued_invoice_value = NumberRowValue(prefix=issued_invoice_prefix)
+        second_issued_invoice_value.save()
+        # Pro druhy prefix zalozime dve values
+        first_received_invoice_value = NumberRowValue(prefix=received_invoice_prefix)
+        first_received_invoice_value.save()
+        second_received_invoice_value = NumberRowValue(prefix=received_invoice_prefix)
+        second_received_invoice_value.save()
+        self.assertEqual(first_issued_invoice_value.value, 1, "first_issued_invoice_value.value = 1")
+        self.assertEqual(second_issued_invoice_value.value, 2, "second_issued_invoice_value.value = 2")
+        self.assertEqual(first_received_invoice_value.value, 1, "first_received_invoice_value.value = 1")
+        self.assertEqual(second_received_invoice_value.value, 2, "second_received_invoice_value.value = 2")
 
-
-
-
-
-
-
+    def get_current_year(self):
+        return str(datetime.now().year)
