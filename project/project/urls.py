@@ -28,6 +28,9 @@ urlpatterns = [
 
     path("number_rows/", invoices_views.number_row_prefix_list, name="number_row_prefix_list"),
     path("number_rows/create", invoices_views.number_row_prefix_create, name="number_row_prefix_create"),
-    path("number_rows/<id>", invoices_views.number_row_prefix_detail, name="number_row_prefix_detail")
+    path("number_rows/<id>", invoices_views.number_row_prefix_detail, name="number_row_prefix_detail"),
+
+    path("number_row_values/", invoices_views.number_row_value_list, name="number_row_value_list"),
+    path("number_row_values/create", invoices_views.number_row_value_create, name="number_row_value_create")
 ]
 
