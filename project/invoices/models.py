@@ -38,6 +38,9 @@ class NumberRowValue(Entity):
     value = models.IntegerField(unique=False, null=False)
     prefix = models.ForeignKey(NumberRowPrefix, on_delete=models.CASCADE)
 
+    def get_final_value(self):
+        return f"{self.prefix.get_final_prefix()}{self.value:04}"
+
     def save(self, *args, **kwargs):
         if self._state.adding:
             self.value = NumberRowValue.objects.filter(prefix=self.prefix).count() + 1
