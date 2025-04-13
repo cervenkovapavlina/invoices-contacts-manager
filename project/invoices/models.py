@@ -19,6 +19,9 @@ class Entity(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     deleted_at = models.DateTimeField(default=None, null=True, blank=True)
 
+    class Meta:
+        abstract = True
+
 
 class NumberRowPrefix(Entity):
     prefix = models.CharField(max_length=10, default="", unique=False, null=True)
