@@ -18,44 +18,42 @@ class NumberRowTest(TestCase):
     def tearDown(self):
         pass
 
-    # def test_default_values(self):
-    #     number_row = NumberRow()
-    #     number_row.save()
-    #     self.assertGreater(number_row.id, 0, "number_row.id > 0")
-    #     self.assertEqual(number_row.prefix, str(datetime.now().year), "number_row.prefix = str(datetime.now().year)")
-    #     self.assertEqual(number_row.value, 1, "number_row.order = 1")
-    #
-    # def test_given_prefix(self):
-    #     issued_invoice_number_row = NumberRow(prefix="FV2025")
-    #     issued_invoice_number_row.save()
-    #     received_invoice_number_row = NumberRow(prefix="FP2025")
-    #     received_invoice_number_row.save()
-    #     self.assertEqual(issued_invoice_number_row.prefix, "FV2025", "issued_invoice_number_row.prefix = FV2025")
-    #     self.assertEqual(received_invoice_number_row.prefix, "FP2025", "received_invoice_number_row.prefix = FP2025")
-
-    def test_given_unique_prefix(self):
-        prefix = "FV"
-        number_row_prefix = NumberRowPrefix(prefix=prefix)
+    def test_default_values(self):
+        number_row_prefix = NumberRowPrefix()
         number_row_prefix.save()
+        self.assertGreater(number_row_prefix.id, 0, "number_row_prefix.id > 0")
+        self.assertEqual(number_row_prefix.prefix, "","number_row_prefix.prefix = \"\" ")
+        self.assertEqual(number_row_prefix.year, self.get_current_year(),
+                         "number_row.prefix.year = self.get_current_year()")
+        number_row_value = NumberRowValue(prefix=number_row_prefix)
+        number_row_value.save()
+        self.assertGreater(number_row_value.id, 0, "number_row_value.id > 0")
+        self.assertEqual(number_row_value.value, 1, "number_row_value.value = 1")
+
+    def test_two_number_rows_with_identical_prefix(self):
+        prefix = "I"
+        first_number_row_prefix = NumberRowPrefix(prefix=prefix)
+        first_number_row_prefix.save()
         unique_exception = False
         try:
-            number_row_prefix_2 = NumberRowPrefix(prefix=prefix)
-            number_row_prefix_2.save()
+            second_number_row_prefix = NumberRowPrefix(prefix=prefix)
+            second_number_row_prefix.save()
         except ValidationError as e:
-            self.assertEqual("Final prefix already exists.", e.message)
+            self.assertEqual("Final prefix already exists.", e.message, "Final prefix already exists. = e.message")
             unique_exception = True
         self.assertTrue(unique_exception, "unique_exception = True")
 
-    def test_abc(self):
+
+    def test_multiple_number_row_values_with_different_prefixes(self):
         # Zalozime dva prefixy
-        issued_invoice_prefix = NumberRowPrefix(prefix="FV")
+        issued_invoice_prefix = NumberRowPrefix(prefix="I")
         issued_invoice_prefix.save()
-        received_invoice_prefix = NumberRowPrefix(prefix="FP")
+        received_invoice_prefix = NumberRowPrefix(prefix="R")
         received_invoice_prefix.save()
-        self.assertEqual(issued_invoice_prefix.get_final_prefix(), f"FV{self.get_current_year()}",
-                         "issued_invoice_prefix.get_final_prefix() = f\"FV{self.get_current_year()}\"")
-        self.assertEqual(received_invoice_prefix.get_final_prefix(), f"FP{self.get_current_year()}",
-                         "received_invoice_prefix.get_final_prefix() = f\"FP{self.get_current_year()}\"")
+        self.assertEqual(issued_invoice_prefix.get_final_prefix(), f"I{self.get_current_year()}",
+                         "issued_invoice_prefix.get_final_prefix() = f\"I{self.get_current_year()}\"")
+        self.assertEqual(received_invoice_prefix.get_final_prefix(), f"R{self.get_current_year()}",
+                         "received_invoice_prefix.get_final_prefix() = f\"R{self.get_current_year()}\"")
         # Pro prvni prefix zalozime dve values
         first_issued_invoice_value = NumberRowValue(prefix=issued_invoice_prefix)
         first_issued_invoice_value.save()
@@ -71,5 +69,37 @@ class NumberRowTest(TestCase):
         self.assertEqual(first_received_invoice_value.value, 1, "first_received_invoice_value.value = 1")
         self.assertEqual(second_received_invoice_value.value, 2, "second_received_invoice_value.value = 2")
 
+    def test_final_number_row_values(self):
+        # Zalozime dva prefixy, jeden s defaultem, jeden zadany
+        default_prefix = NumberRowPrefix()
+        default_prefix.save()
+        given_prefix = NumberRowPrefix(prefix="I")
+        given_prefix.save()
+        # Pro kazdy prefix vytvorime cyklem 10 number row values
+        for i in range(1, 11):
+            number_row_value = NumberRowValue(prefix=default_prefix)
+            number_row_value.save()
+        for i in range(1, 11):
+            number_row_value = NumberRowValue(prefix=given_prefix)
+            number_row_value.save()
+        # Kontrola finalni hodnoty pro prvni a desatou value pro defaultni prefix
+        first_value_with_default_prefix = NumberRowValue.objects.filter(prefix=default_prefix, value=1)[0]
+        tenth_value_with_default_prefix = NumberRowValue.objects.filter(prefix=default_prefix, value=10)[0]
+        self.assertEqual(first_value_with_default_prefix.get_final_value(), f"{self.get_current_year()}0001",
+                         "first_value_with_default_prefix.get_final_value() = f\"{self.get_current_year()}0001\"")
+        self.assertEqual(tenth_value_with_default_prefix.get_final_value(), f"{self.get_current_year()}0010",
+                         "tenth_value_with_default_prefix.get_final_value() = f\"{self.get_current_year()}0010\"")
+        # Kontrola finalni hodnoty pro prvni a desatou value pro zadany prefix
+        first_value_with_given_prefix = NumberRowValue.objects.filter(prefix=given_prefix, value=1)[0]
+        tenth_value_with_given_prefix = NumberRowValue.objects.filter(prefix=given_prefix, value=10)[0]
+        self.assertEqual(first_value_with_given_prefix.get_final_value(), f"{given_prefix.prefix}{self.get_current_year()}0001",
+                         "first_value_with_given_prefix.get_final_value() = f\"{given_prefix.prefix}{self.get_current_year()}0001\"")
+        self.assertEqual(tenth_value_with_given_prefix.get_final_value(),
+                         f"{given_prefix.prefix}{self.get_current_year()}0010",
+                         "tenth_value_with_given_prefix.get_final_value() = f\"{given_prefix.prefix}{self.get_current_year()}0010\"")
+
     def get_current_year(self):
         return str(datetime.now().year)
+
+
+
