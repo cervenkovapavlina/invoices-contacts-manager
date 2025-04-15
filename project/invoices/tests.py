@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from .models import NumberRowPrefix, NumberRowValue
+from .models import NumberRowPrefix, NumberRowValue, Invoice, InvoiceItem
 from django.utils import timezone
 from datetime import datetime
 
@@ -22,7 +22,7 @@ class NumberRowTest(TestCase):
         number_row_prefix = NumberRowPrefix()
         number_row_prefix.save()
         self.assertGreater(number_row_prefix.id, 0, "number_row_prefix.id > 0")
-        self.assertEqual(number_row_prefix.prefix, "","number_row_prefix.prefix = \"\" ")
+        self.assertEqual(number_row_prefix.prefix, "", "number_row_prefix.prefix = \"\" ")
         self.assertEqual(number_row_prefix.year, self.get_current_year(),
                          "number_row.prefix.year = self.get_current_year()")
         number_row_value = NumberRowValue(prefix=number_row_prefix)
@@ -42,7 +42,6 @@ class NumberRowTest(TestCase):
             self.assertEqual("Final prefix already exists.", e.message, "Final prefix already exists. = e.message")
             unique_exception = True
         self.assertTrue(unique_exception, "unique_exception = True")
-
 
     def test_multiple_number_row_values_with_different_prefixes(self):
         # Zalozime dva prefixy
@@ -92,7 +91,8 @@ class NumberRowTest(TestCase):
         # Kontrola finalni hodnoty pro prvni a desatou value pro zadany prefix
         first_value_with_given_prefix = NumberRowValue.objects.filter(prefix=given_prefix, value=1)[0]
         tenth_value_with_given_prefix = NumberRowValue.objects.filter(prefix=given_prefix, value=10)[0]
-        self.assertEqual(first_value_with_given_prefix.get_final_value(), f"{given_prefix.prefix}{self.get_current_year()}0001",
+        self.assertEqual(first_value_with_given_prefix.get_final_value(),
+                         f"{given_prefix.prefix}{self.get_current_year()}0001",
                          "first_value_with_given_prefix.get_final_value() = f\"{given_prefix.prefix}{self.get_current_year()}0001\"")
         self.assertEqual(tenth_value_with_given_prefix.get_final_value(),
                          f"{given_prefix.prefix}{self.get_current_year()}0010",
@@ -102,4 +102,38 @@ class NumberRowTest(TestCase):
         return str(datetime.now().year)
 
 
+class InvoiceItemTest(TestCase):
 
+    def test_default_values_when_only_required_fields_set(self):
+        invoice = Invoice()
+        invoice.save()
+        invoice_item = InvoiceItem(name="Web Hosting", unit_price=120000, invoice=invoice)
+        invoice_item.save()
+        self.assertGreater(invoice_item.id, 0, "invoice_item.id > 0")
+        self.assertEqual(invoice_item.unit_count, 1, "invoice_item.unit_count = 1")
+
+    def test_multiple_invoice_items_assigned_to_different_invoices(self):
+        # Vytvorime dve faktury
+        first_invoice = Invoice()
+        first_invoice.save()
+        second_invoice = Invoice()
+        second_invoice.save()
+        # Vytvorime dve polozky na prvni fakturu
+        first_invoice_item = InvoiceItem(name="Web Hosting", description="Annual fee for web hosting services",
+                                         unit_price=120000, unit_count=1, invoice=first_invoice)
+        first_invoice_item.save()
+        second_invoice_item = InvoiceItem(name="Domain .cz", unit_price=25000, invoice=first_invoice)
+        second_invoice_item.save()
+        # Vytvorime tri polozky na druhou fakturu
+        third_invoice_item = InvoiceItem(name="Consulting", description="IT consulting – 5 hours",
+                                         unit_price=100000, unit_count=5, invoice=second_invoice)
+        third_invoice_item.save()
+        fourth_invoice_item = InvoiceItem(name="Acer laptop", unit_price=1950000, unit_count=3, invoice=second_invoice)
+        fourth_invoice_item.save()
+        fifth_invoice_item = InvoiceItem(name="Licensed Software", description="Annual license", unit_price=25000,
+                                         invoice=second_invoice)
+        fifth_invoice_item.save()
+        self.assertEqual(InvoiceItem.objects.filter(invoice=first_invoice).count(), 2,
+                         "InvoiceItem.objects.filter(invoice=first_invoice).count() = 2")
+        self.assertEqual(InvoiceItem.objects.filter(invoice=second_invoice).count(), 3,
+                         "InvoiceItem.objects.filter(invoice=second_invoice).count() = 3")
