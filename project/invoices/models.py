@@ -8,12 +8,6 @@ from datetime import datetime
 # Create your models here.
 
 
-class Invoice(models.Model):
-    id = models.AutoField(primary_key=True)
-    created = models.DateTimeField(default=timezone.now)
-    variable_symbol = models.CharField(max_length=50)
-
-
 class Entity(models.Model):
     id = models.AutoField(primary_key=True)
     created_at = models.DateTimeField(default=timezone.now)
@@ -48,5 +42,19 @@ class NumberRowValue(Entity):
         if self._state.adding:
             self.value = NumberRowValue.objects.filter(prefix=self.prefix).count() + 1
         super(NumberRowValue, self).save(*args, **kwargs)
+
+
+class Invoice(models.Model):
+    id = models.AutoField(primary_key=True)
+    created = models.DateTimeField(default=timezone.now)
+    variable_symbol = models.CharField(max_length=50)
+
+
+class InvoiceItem(Entity):
+    name = models.CharField(max_length=300, null=False)
+    description = models.CharField(max_length=500, null=True)
+    unit_price = models.BigIntegerField(null=False)
+    unit_count = models.IntegerField(null=False, default=1)
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
 
 
