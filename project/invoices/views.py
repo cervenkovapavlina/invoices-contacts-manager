@@ -4,7 +4,7 @@ from django.core.serializers import serialize
 from django.template import loader
 import json
 from invoices.models import Invoice
-from invoices.models import NumberRowPrefix, NumberRowValue
+from invoices.models import NumberRowPrefix, NumberRowValue, InvoiceItem
 from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
@@ -52,4 +52,33 @@ def number_row_value_create(request):
         except:
             return render(request, "404.html", status=404)
     return render(request, "405.html", status=405)
+
+
+def invoice_item_list(request):
+    return JsonResponse(serialize('python', InvoiceItem.objects.all()), safe=False)
+
+
+def invoice_item_detail(request, id):
+    try:
+        invoice_item = InvoiceItem.objects.get(id=id)
+        serialized_data = serialize('python', [invoice_item])
+        return JsonResponse(serialized_data[0], safe=False)
+    except:
+        return render(request, "404.html", status=404)
+
+
+@csrf_exempt
+def invoice_item_create(request):
+    if request.method == "POST":
+        json_data = json.loads(request.body)
+        try:
+            invoice = Invoice.objects.get(id=json_data["invoice"])
+            invoice_item = InvoiceItem(name=json_data["name"], description=json_data["description"], unit_price=json_data["unit_price"],
+                                       unit_count=json_data["unit_count"], invoice=invoice)
+            invoice_item.save()
+            return JsonResponse({"id": invoice_item.id})
+        except:
+            return render(request, "404.html", status=404)
+    return render(request, "405.html", status=405)
+
 
