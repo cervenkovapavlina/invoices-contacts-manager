@@ -26,6 +26,10 @@ class Entity(models.Model):
 class NumberRowPrefix(Entity):
     prefix = models.CharField(max_length=10, default="", unique=False, null=True)
     year = models.CharField(max_length=4, default=str(datetime.now().year), unique=False, null=False)
+    name = models.CharField(max_length=50, null=False, unique=True)
+    received = models.BooleanField(default=True)
+
+
 
     def get_final_prefix(self):
         return f"{self.prefix}{self.year}"

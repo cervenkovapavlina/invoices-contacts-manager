@@ -33,7 +33,7 @@ def number_row_prefix_create(request):
         json_data = json.loads(request.body)
         number_row_prefix = NumberRowPrefix(prefix=json_data["prefix"])
         number_row_prefix.save()
-        return JsonResponse({"Final prefix": number_row_prefix.get_final_prefix()})
+        return JsonResponse({"id": number_row_prefix.id})
     return render(request, "405.html", status=405)
 
 
