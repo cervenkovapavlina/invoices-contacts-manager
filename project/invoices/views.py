@@ -7,6 +7,7 @@ from invoices.models import Invoice
 from invoices.models import NumberRowPrefix, NumberRowValue
 from django.views.decorators.csrf import csrf_exempt
 
+
 # Create your views here.
 
 
@@ -31,25 +32,12 @@ def number_row_prefix_detail(request, id):
 def number_row_prefix_create(request):
     if request.method == "POST":
         json_data = json.loads(request.body)
-        number_row_prefix = NumberRowPrefix(prefix=json_data["prefix"])
+        number_row_prefix = NumberRowPrefix(prefix=json_data["prefix"], name=json_data["name"],
+                                            received=json_data["received"])
         number_row_prefix.save()
         return JsonResponse({"id": number_row_prefix.id})
     return render(request, "405.html", status=405)
 
 
-def number_row_value_list(request):
-    return JsonResponse(serialize('python', NumberRowValue.objects.all()), safe=False)
 
-@csrf_exempt
-def number_row_value_create(request):
-    if request.method == "POST":
-        json_data = json.loads(request.body)
-        try:
-            number_row_prefix = NumberRowPrefix.objects.get(prefix=json_data["prefix"])
-            number_row_value = NumberRowValue(prefix=number_row_prefix)
-            number_row_value.save()
-            return JsonResponse({"Final value": number_row_value.get_final_value()})
-        except:
-            return render(request, "404.html", status=404)
-    return render(request, "405.html", status=405)
 
