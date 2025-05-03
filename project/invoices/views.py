@@ -3,7 +3,6 @@ from django.http import HttpResponse, JsonResponse
 from django.core.serializers import serialize
 from django.template import loader
 import json
-from invoices.models import Invoice
 from invoices.models import NumberRowPrefix, NumberRowValue
 from django.views.decorators.csrf import csrf_exempt
 
