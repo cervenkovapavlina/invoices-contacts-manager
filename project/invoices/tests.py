@@ -18,14 +18,22 @@ class NumberRowTest(TestCase):
     def tearDown(self):
         pass
 
-    def test_default_values(self):
-        number_row_prefix = NumberRowPrefix(name="Rada faktur")
+    def prefix(name, prefix='', received=True):
+        number_row_prefix = NumberRowPrefix(name=name, prefix=prefix, received=received)
         number_row_prefix.save()
+        return number_row_prefix
+
+    def value(prefix, year=datetime.now().year):
+        number_row_value = NumberRowValue(prefix=prefix, year=str(year))
+        number_row_value.save()
+        return number_row_value
+
+    def test_default_values(self):
+        number_row_prefix = self.prefix(name="Rada faktur")        
         self.assertGreater(number_row_prefix.id, 0, "number_row_prefix.id > 0")
         self.assertEqual(number_row_prefix.prefix, "", "number_row_prefix.prefix = \"\" ")
         self.assertTrue(number_row_prefix.received, "number_row_prefix.received = True")
-        number_row_value = NumberRowValue(prefix=number_row_prefix)
-        number_row_value.save()
+        number_row_value = self.value(prefix=number_row_prefix)
         self.assertGreater(number_row_value.id, 0, "number_row_value.id > 0")
         self.assertEqual(number_row_value.value, 1, "number_row_value.value = 1")
         self.assertEqual(number_row_value.year, self.get_current_year(),
@@ -33,12 +41,11 @@ class NumberRowTest(TestCase):
 
     def test_identical_prefix_for_identical_invoice_type(self):
         prefix = "F"
-        first_number_row_prefix = NumberRowPrefix(prefix=prefix, name="Prvni rada faktur")
-        first_number_row_prefix.save()
+        first_number_row_prefix = self.prefix(name="Prvni rada faktur", prefix=prefix)
+        
         unique_exception = False
         try:
-            second_number_row_prefix = NumberRowPrefix(prefix=prefix, name="Draha rada faktur")
-            second_number_row_prefix.save()
+            second_number_row_prefix = self.prefix(name="Draha rada faktur", prefix=prefix)            
         except ValidationError as e:
             self.assertEqual("Prefix already exists for the selected invoice type.", e.message,
                              "Prefix already exists for the selected invoice type. = e.message")
@@ -47,16 +54,13 @@ class NumberRowTest(TestCase):
 
     def test_identical_prefix_for_different_invoice_types(self):
         prefix = "F"
-        received_invoice_prefix = NumberRowPrefix(prefix=prefix, name="Prijate faktury")
-        received_invoice_prefix.save()
-        issued_invoice_prefix = NumberRowPrefix(prefix=prefix, name="Vystavene faktury", received=False)
-        issued_invoice_prefix.save()
+        received_invoice_prefix = self.prefix(name="Prijate faktury", prefix=prefix)
+        issued_invoice_prefix = self.prefix(name="Vystavene faktury", prefix=prefix, received=False)        
         self.assertEqual(received_invoice_prefix.prefix, "F", "received_invoice_prefix.prefix = F")
         self.assertEqual(issued_invoice_prefix.prefix, "F", "issued_invoice_prefix.prefix = F")
-        received_invoice_value = NumberRowValue(prefix=received_invoice_prefix, year="2025")
-        received_invoice_value.save()
-        issued_invoice_value = NumberRowValue(prefix=issued_invoice_prefix, year="2025")
-        issued_invoice_value.save()
+        
+        received_invoice_value = self.value(prefix=received_invoice_prefix, year="2025")        
+        issued_invoice_value = value(prefix=issued_invoice_prefix, year="2025")        
         self.assertEqual(received_invoice_value.value, 1, "received_invoice_value.value = 1")
         self.assertEqual(issued_invoice_value.value, 1, "issued_invoice_value.value = 1")
         self.assertEqual(received_invoice_value.get_final_value(), "F20250001",
@@ -66,100 +70,73 @@ class NumberRowTest(TestCase):
 
     def test_multiple_number_row_values_with_identical_prefix_and_identical_or_different_year(self):
         # Zalozime prefix
-        number_row_prefix = NumberRowPrefix(prefix="F", name="Rada faktur")
-        number_row_prefix.save()
+        number_row_prefix = self.prefix(prefix="F", name="Rada faktur")
+
         # Vytvorime dve values do aktualniho roku
-        first_value_in_current_year = NumberRowValue(prefix=number_row_prefix, year=self.get_current_year())
-        first_value_in_current_year.save()
-        second_value_in_current_year = NumberRowValue(prefix=number_row_prefix, year=self.get_current_year())
-        second_value_in_current_year.save()
+        first_value_in_current_year = self.value(prefix=number_row_prefix, year=self.get_current_year())
+        second_value_in_current_year = self.value(prefix=number_row_prefix, year=self.get_current_year())
         self.assertEqual(first_value_in_current_year.value, 1, "first_value_in_current_year.value = 1")
         self.assertEqual(second_value_in_current_year.value, 2, "second_value_in_current_year.value = 2")
+
         # Vytvorime dve values do minuleho roku
-        first_value_in_previous_year = NumberRowValue(prefix=number_row_prefix, year=self.get_previous_year())
-        first_value_in_previous_year.save()
-        second_value_in_previous_year = NumberRowValue(prefix=number_row_prefix, year=self.get_previous_year())
-        second_value_in_previous_year.save()
+        first_value_in_previous_year = self.value(prefix=number_row_prefix, year=self.get_previous_year())
+        second_value_in_previous_year = self.value(prefix=number_row_prefix, year=self.get_previous_year())
         self.assertEqual(first_value_in_previous_year.value, 1, "first_value_in_previous_year.value = 1")
         self.assertEqual(second_value_in_previous_year.value, 2, "second_value_in_previous_year.value = 2")
 
     def test_multiple_number_row_values_with_identical_or_different_prefix_and_identical_year(self):
         # Zalozime dva prefixy
-        received_invoice_prefix = NumberRowPrefix(prefix="PF", name="Prijate faktury")
-        received_invoice_prefix.save()
-        issued_invoice_prefix = NumberRowPrefix(prefix="VF", name="Vystavene faktury", received=False)
-        issued_invoice_prefix.save()
+        received_invoice_prefix = self.prefix(prefix="PF", name="Prijate faktury")
+        issued_invoice_prefix = self.prefix(prefix="VF", name="Vystavene faktury", received=False)
+
         # Pro prvni prefix zalozime dve values do aktualniho roku
-        first_received_invoice_value = NumberRowValue(prefix=received_invoice_prefix, year=self.get_current_year())
-        first_received_invoice_value.save()
-        second_received_invoice_value = NumberRowValue(prefix=received_invoice_prefix, year=self.get_current_year())
-        second_received_invoice_value.save()
+        first_received_invoice_value = self.value(prefix=received_invoice_prefix, year=self.get_current_year())
+        second_received_invoice_value = self.value(prefix=received_invoice_prefix, year=self.get_current_year())
+
         self.assertEqual(first_received_invoice_value.value, 1, "first_received_invoice_value.value = 1")
         self.assertEqual(second_received_invoice_value.value, 2, "second_received_invoice_value.value = 2")
+
         # Pro druhy prefix zalozime dve values do aktualniho roku
-        first_issued_invoice_value = NumberRowValue(prefix=issued_invoice_prefix, year=self.get_current_year())
-        first_issued_invoice_value.save()
-        second_issued_invoice_value = NumberRowValue(prefix=issued_invoice_prefix, year=self.get_current_year())
-        second_issued_invoice_value.save()
+        first_issued_invoice_value = self.value(prefix=issued_invoice_prefix, year=self.get_current_year())
+        second_issued_invoice_value = self.value(prefix=issued_invoice_prefix, year=self.get_current_year())
+
         self.assertEqual(first_issued_invoice_value.value, 1, "first_issued_invoice_value.value = 1")
         self.assertEqual(second_issued_invoice_value.value, 2, "second_issued_invoice_value.value = 2")
 
     def test_final_number_row_values(self):
         # Zalozime dva prefixy, jeden s defaultem, jeden zadany
-        default_prefix = NumberRowPrefix(name="Defaultni rada faktur")
-        default_prefix.save()
-        given_prefix = NumberRowPrefix(prefix="F", name="Zadana rada faktur")
-        given_prefix.save()
-        # Pro oba prefixy vytvorime cyklem 11 values pro rok 2025
-        for i in range(1, 12):
-            number_row_value = NumberRowValue(prefix=default_prefix, year="2025")
-            number_row_value.save()
-        for i in range(1, 12):
-            number_row_value = NumberRowValue(prefix=given_prefix, year="2025")
-            number_row_value.save()
-        # Pro oba prefixy vytvorime cyklem 11 values pro rok 2024
-        for i in range(1, 12):
-            number_row_value = NumberRowValue(prefix=default_prefix, year="2024")
-            number_row_value.save()
-        for i in range(1, 12):
-            number_row_value = NumberRowValue(prefix=given_prefix, year="2024")
-            number_row_value.save()
-        # Kontrola finalni hodnoty pro prvni a jedenactou value pro defaultni prefix pro rok 2025
-        first_value_with_default_prefix_in_2025 = \
-        NumberRowValue.objects.filter(prefix=default_prefix, year="2025", value=1)[0]
-        eleventh_value_with_default_prefix_in_2025 = \
-        NumberRowValue.objects.filter(prefix=default_prefix, year="2025", value=11)[0]
-        self.assertEqual(first_value_with_default_prefix_in_2025.get_final_value(), "20250001",
-                         "first_value_with_default_prefix_in_2025.get_final_value() = 20250001")
-        self.assertEqual(eleventh_value_with_default_prefix_in_2025.get_final_value(), "20250011",
-                         "eleventh_value_with_default_prefix_in_2025.get_final_value() = 20250011")
-        # Kontrola finalni hodnoty pro prvni a jedenactou value pro given prefix pro rok 2025
-        first_value_with_given_prefix_in_2025 = \
-        NumberRowValue.objects.filter(prefix=given_prefix, year="2025", value=1)[0]
-        eleventh_value_with_given_prefix_in_2025 = \
-        NumberRowValue.objects.filter(prefix=given_prefix, year="2025", value=11)[0]
-        self.assertEqual(first_value_with_given_prefix_in_2025.get_final_value(), "F20250001",
-                         "first_value_with_given_prefix_in_2025.get_final_value() = F20250001")
-        self.assertEqual(eleventh_value_with_given_prefix_in_2025.get_final_value(), "F20250011",
-                         "eleventh_value_with_given_prefix_in_2025.get_final_value() = F20250011")
-        # Kontrola finalni hodnoty pro prvni a jedenactou value pro defaultni prefix pro rok 2024
-        first_value_with_default_prefix_in_2024 = \
-        NumberRowValue.objects.filter(prefix=default_prefix, year="2024", value=1)[0]
-        eleventh_value_with_default_prefix_in_2024 = \
-        NumberRowValue.objects.filter(prefix=default_prefix, year="2024", value=11)[0]
-        self.assertEqual(first_value_with_default_prefix_in_2024.get_final_value(), "20240001",
-                         "first_value_with_default_prefix_in_2024.get_final_value() = 20240001")
-        self.assertEqual(eleventh_value_with_default_prefix_in_2024.get_final_value(), "20240011",
-                         "eleventh_value_with_default_prefix_in_2024.get_final_value() = 20240011")
-        # Kontrola finalni hodnoty pro prvni a jedenactou value pro given prefix pro rok 2024
-        first_value_with_given_prefix_in_2024 = \
-        NumberRowValue.objects.filter(prefix=given_prefix, year="2024", value=1)[0]
-        eleventh_value_with_given_prefix_in_2024 = \
-        NumberRowValue.objects.filter(prefix=given_prefix, year="2024", value=11)[0]
-        self.assertEqual(first_value_with_given_prefix_in_2024.get_final_value(), "F20240001",
-                         "first_value_with_given_prefix_in_2024.get_final_value() = F20240001")
-        self.assertEqual(eleventh_value_with_given_prefix_in_2024.get_final_value(), "F20240011",
-                         "eleventh_value_with_given_prefix_in_2024.get_final_value() = F20240011")
+        default_prefix = self.prefix(name="Defaultni rada faktur")
+        given_prefix = self.prefix(prefix="F", name="Zadana rada faktur")
+
+        count = 12
+        this_year = 2025 
+        previous_year = this_year - 1
+
+        # Pro oba prefixy vytvorime cyklem 'count' values pro rok 'this_year' a 'previous_year'
+        for i in range(1, count):
+            self.value(prefix=default_prefix, year=this_year)
+            self.value(prefix=given_prefix, year=this_year)
+            self.value(prefix=default_prefix, year=previous_year)
+            self.value(prefix=given_prefix, year=previous_year)
+
+        self.assert_first_and_last_value(this_year, default_prefix, count)
+        self.assert_first_and_last_value(this_year, given_prefix, count)
+        self.assert_first_and_last_value(previous_year, default_prefix, count)
+        self.assert_first_and_last_value(previous_year, given_prefix, count)
+
+    def make_invoice_number(self, year, value):
+        return f"{year}{value:0>4}"
+
+    def assert_first_and_last_value(self, year, prefix, count):
+        first_value_with_default_prefix = NumberRowValue.objects.filter(prefix=prefix, year=year, value=1)[0]
+        last_value_with_default_prefix = NumberRowValue.objects.filter(prefix=prefix, year=year, value=count-1)[0]
+
+        first_expected_value = self.make_invoice_number(year, 1),
+        self.assertEqual(first_value_with_default_prefix.get_final_value(), first_expected_value
+                         f"first_value_with_default_prefix.get_final_value() = {first_expected_value}")
+        last_expected_value = self.make_invoice_number(year, count - 1),
+        self.assertEqual(last_value_with_default_prefix.get_final_value(), last_expected_value,
+                         f"eleventh_value_with_default_prefix_in_this_year.get_final_value() = {last_expected_value}")
 
     def get_current_year(self):
         return str(datetime.now().year)
