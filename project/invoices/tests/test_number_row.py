@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from .models import NumberRowPrefix, NumberRowValue
+from invoices.models import NumberRowPrefix, NumberRowValue
 from django.utils import timezone
 from datetime import datetime
 
