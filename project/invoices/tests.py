@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from .models import NumberRowPrefix, NumberRowValue
+from invoices.models import NumberRowPrefix, NumberRowValue
 from django.utils import timezone
 from datetime import datetime
 
@@ -18,18 +18,18 @@ class NumberRowTest(TestCase):
     def tearDown(self):
         pass
 
-    def prefix(name, prefix='', received=True):
+    def prefix(self, name, prefix='', received=True):
         number_row_prefix = NumberRowPrefix(name=name, prefix=prefix, received=received)
         number_row_prefix.save()
         return number_row_prefix
 
-    def value(prefix, year=datetime.now().year):
+    def value(self, prefix, year=datetime.now().year):
         number_row_value = NumberRowValue(prefix=prefix, year=str(year))
         number_row_value.save()
         return number_row_value
 
     def test_default_values(self):
-        number_row_prefix = self.prefix(name="Rada faktur")        
+        number_row_prefix = self.prefix(name="Rada faktur")
         self.assertGreater(number_row_prefix.id, 0, "number_row_prefix.id > 0")
         self.assertEqual(number_row_prefix.prefix, "", "number_row_prefix.prefix = \"\" ")
         self.assertTrue(number_row_prefix.received, "number_row_prefix.received = True")
@@ -42,10 +42,10 @@ class NumberRowTest(TestCase):
     def test_identical_prefix_for_identical_invoice_type(self):
         prefix = "F"
         first_number_row_prefix = self.prefix(name="Prvni rada faktur", prefix=prefix)
-        
+
         unique_exception = False
         try:
-            second_number_row_prefix = self.prefix(name="Draha rada faktur", prefix=prefix)            
+            second_number_row_prefix = self.prefix(name="Draha rada faktur", prefix=prefix)
         except ValidationError as e:
             self.assertEqual("Prefix already exists for the selected invoice type.", e.message,
                              "Prefix already exists for the selected invoice type. = e.message")
@@ -55,12 +55,12 @@ class NumberRowTest(TestCase):
     def test_identical_prefix_for_different_invoice_types(self):
         prefix = "F"
         received_invoice_prefix = self.prefix(name="Prijate faktury", prefix=prefix)
-        issued_invoice_prefix = self.prefix(name="Vystavene faktury", prefix=prefix, received=False)        
+        issued_invoice_prefix = self.prefix(name="Vystavene faktury", prefix=prefix, received=False)
         self.assertEqual(received_invoice_prefix.prefix, "F", "received_invoice_prefix.prefix = F")
         self.assertEqual(issued_invoice_prefix.prefix, "F", "issued_invoice_prefix.prefix = F")
-        
-        received_invoice_value = self.value(prefix=received_invoice_prefix, year="2025")        
-        issued_invoice_value = value(prefix=issued_invoice_prefix, year="2025")        
+
+        received_invoice_value = self.value(prefix=received_invoice_prefix, year="2025")
+        issued_invoice_value = self.value(prefix=issued_invoice_prefix, year="2025")
         self.assertEqual(received_invoice_value.value, 1, "received_invoice_value.value = 1")
         self.assertEqual(issued_invoice_value.value, 1, "issued_invoice_value.value = 1")
         self.assertEqual(received_invoice_value.get_final_value(), "F20250001",
@@ -109,7 +109,7 @@ class NumberRowTest(TestCase):
         given_prefix = self.prefix(prefix="F", name="Zadana rada faktur")
 
         count = 12
-        this_year = 2025 
+        this_year = 2025
         previous_year = this_year - 1
 
         # Pro oba prefixy vytvorime cyklem 'count' values pro rok 'this_year' a 'previous_year'
@@ -124,17 +124,17 @@ class NumberRowTest(TestCase):
         self.assert_first_and_last_value(previous_year, default_prefix, count)
         self.assert_first_and_last_value(previous_year, given_prefix, count)
 
-    def make_invoice_number(self, year, value):
-        return f"{year}{value:0>4}"
+    def make_invoice_number(self, year, prefix, value):
+        return f"{prefix.prefix}{year}{value:04}"
 
     def assert_first_and_last_value(self, year, prefix, count):
         first_value_with_default_prefix = NumberRowValue.objects.filter(prefix=prefix, year=year, value=1)[0]
-        last_value_with_default_prefix = NumberRowValue.objects.filter(prefix=prefix, year=year, value=count-1)[0]
+        last_value_with_default_prefix = NumberRowValue.objects.filter(prefix=prefix, year=year, value=count - 1)[0]
 
-        first_expected_value = self.make_invoice_number(year, 1),
-        self.assertEqual(first_value_with_default_prefix.get_final_value(), first_expected_value
-                         f"first_value_with_default_prefix.get_final_value() = {first_expected_value}")
-        last_expected_value = self.make_invoice_number(year, count - 1),
+        first_expected_value = self.make_invoice_number(year, prefix,1)
+        self.assertEqual(first_value_with_default_prefix.get_final_value(), first_expected_value,
+        f"first_value_with_default_prefix.get_final_value() = {first_expected_value}")
+        last_expected_value = self.make_invoice_number(year, prefix, count - 1)
         self.assertEqual(last_value_with_default_prefix.get_final_value(), last_expected_value,
                          f"eleventh_value_with_default_prefix_in_this_year.get_final_value() = {last_expected_value}")
 
