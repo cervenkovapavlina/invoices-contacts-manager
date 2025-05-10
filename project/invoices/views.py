@@ -52,13 +52,13 @@ def number_row_prefix_create(request):
         try:
             json_data = json.loads(request.body)
             validator = InputValidator()
-            filled_data = validator.validate_input(json_data, {"prefix": "", "received": True})
+            filled_data = validator.validate_input(json_data, ["name"], {"prefix": "", "received": True})
             number_row_prefix = NumberRowPrefix(prefix=filled_data["prefix"], name=filled_data["name"],
                                                 received=filled_data["received"])
             number_row_prefix.save()
             return JsonResponse({"id": number_row_prefix.id})
         except ValidationError as e:
-            return JsonResponse({"message": f"Invalid input. Required data not provided. {e.message}"}, status=400)
+            return JsonResponse({"message": f"Invalid input. Required data not provided. {e.messages}"}, status=400)
     return JsonResponse({"message": "Method not allowed."}, status=405)
 
 

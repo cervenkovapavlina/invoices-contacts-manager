@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models import UniqueConstraint
 from django.utils import timezone
 from datetime import datetime
+from django.core.validators import MinLengthValidator
 
 
 # Create your models here.
@@ -25,10 +26,15 @@ class Entity(models.Model):
 
 class NumberRowPrefix(Entity):
     prefix = models.CharField(max_length=10, default="", unique=False)
-    name = models.CharField(max_length=50, null=False, unique=True)
+    name = models.CharField(max_length=50, null=False, blank=False, unique=True)
     received = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
+        try:
+            MinLengthValidator(5)(self.name)
+        except ValidationError as e:
+            raise ValidationError({self.name: e.messages + [f"name: {self.name}"]})
+            #raise ValidationError(f"'name': {e.messages}")
         prefix_already_exists = NumberRowPrefix.objects.filter(prefix=self.prefix, received=self.received).count() > 0
         if prefix_already_exists:
             raise ValidationError("Prefix already exists for the selected invoice type.")
@@ -47,5 +53,7 @@ class NumberRowValue(Entity):
         if self._state.adding:
             self.value = NumberRowValue.objects.filter(prefix=self.prefix, year=self.year).count() + 1
         super(NumberRowValue, self).save(*args, **kwargs)
+
+
 
 
