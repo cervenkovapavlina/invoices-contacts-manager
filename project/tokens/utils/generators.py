@@ -16,7 +16,6 @@ def generate_token(user_name, password):
     if user is None:
         raise PermissionDenied(f"User {user_name} and given password not found.")
     new_token = generate_random_string(16)
-    print(new_token)
     token = Token(user=user, token=new_token)
     token.save()
     return token

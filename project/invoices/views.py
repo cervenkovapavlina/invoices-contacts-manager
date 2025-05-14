@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
 from invoices.utils.InputValidator import InputValidator
 from functools import wraps
+from tokens.models import Token
 
 # Create your views here.
 
@@ -17,7 +18,7 @@ def secured_endpoint(endpoint):
     @wraps(endpoint)
     def wrapper(request, *args, **kwargs):
         token = request.headers.get("Token")
-        if token == "abc123":
+        if Token.objects.filter(token=token).count() > 0:
             return endpoint(request, *args, **kwargs)
         else:
             return JsonResponse({"message": "Invalid token."}, status=401)
@@ -30,7 +31,7 @@ def index(request):
     return JsonResponse({})
 
 
-# @secured_endpoint
+@secured_endpoint
 def number_row_prefix_list(request):
     return JsonResponse(serialize('python', NumberRowPrefix.objects.all()), safe=False)
 

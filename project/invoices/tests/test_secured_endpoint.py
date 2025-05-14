@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
-
+from django.contrib.auth.models import User
+from tokens.utils.generators import generate_token
 
 class SecuredEndpointTest(TestCase):
 
@@ -7,7 +8,9 @@ class SecuredEndpointTest(TestCase):
         self.client = Client()
 
     def test_valid_token(self):
-        response = self.client.get("/", HTTP_TOKEN="abc123")
+        User.objects.create_user(username="jmeno", password="heslo")
+        token = generate_token("jmeno", "heslo")
+        response = self.client.get("/", HTTP_TOKEN=token.token)
         self.assertEqual(response.status_code, 200, "response.status_code = 200")
         self.assertEqual(response.json(), {}, "response.json() = {}")
 
