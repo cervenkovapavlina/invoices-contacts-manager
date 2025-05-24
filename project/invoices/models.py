@@ -34,7 +34,6 @@ class NumberRowPrefix(Entity):
             MinLengthValidator(5)(self.name)
         except ValidationError as e:
             raise ValidationError({self.name: e.messages + [f"name: {self.name}"]})
-            #raise ValidationError(f"'name': {e.messages}")
         prefix_already_exists = NumberRowPrefix.objects.filter(prefix=self.prefix, received=self.received).count() > 0
         if prefix_already_exists:
             raise ValidationError("Prefix already exists for the selected invoice type.")

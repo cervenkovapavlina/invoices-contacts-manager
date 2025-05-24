@@ -8,8 +8,8 @@ class SecuredEndpointTest(TestCase):
         self.client = Client()
 
     def test_valid_token(self):
-        User.objects.create_user(username="jmeno", password="heslo")
-        token = generate_token("jmeno", "heslo")
+        User.objects.create_user(username="uzivatel", password="heslo")
+        token = generate_token("uzivatel", "heslo")
         response = self.client.get("/", HTTP_TOKEN=token.token)
         self.assertEqual(response.status_code, 200, "response.status_code = 200")
         self.assertEqual(response.json(), {}, "response.json() = {}")
