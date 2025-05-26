@@ -25,6 +25,11 @@ def secured_endpoint(endpoint):
     return wrapper
 
 
+def report(request):
+    numbers = [1, 2, 3]
+    return HttpResponse(json.dumps(numbers))
+
+
 @secured_endpoint
 def index(request):
     return JsonResponse({})
