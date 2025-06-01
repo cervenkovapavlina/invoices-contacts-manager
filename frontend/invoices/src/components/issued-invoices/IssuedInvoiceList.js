@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import RestClient from "utils/RestClient";
 import IssuedInvoiceModel from "components/issued-invoices/IssuedInvoiceModel";
+import IssuedInvoiceDetail from "components/issued-invoices/IssuedInvoiceDetail";
 
 function IssuedInvoiceList(){
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedInvoice, setSelectedInvoice] = useState(null)
 
   function generateTestData(){
     let invoices = [];
@@ -28,6 +30,7 @@ function IssuedInvoiceList(){
 
   return (
     <div className="issued-invoice-list">
+        <div>
         <table>
             <thead>
                 <tr>
@@ -41,7 +44,7 @@ function IssuedInvoiceList(){
             <tbody>
                 {invoices.map((item) => (
                     <tr key={item.id}>
-                        <td>{item.id}</td>
+                        <td onClick={() => setSelectedInvoice(item.id)}>{item.id}</td>
                         <td>{item.invoiceNumber}</td>
                         <td>{item.variableSymbol}</td>
                         <td>{item.issuedDate.toLocaleDateString()}</td>
@@ -50,6 +53,14 @@ function IssuedInvoiceList(){
                 ))}
             </tbody>
         </table>
+        </div>
+        <div>
+            {selectedInvoice && (
+                <div className="issued-invoice-detail">
+                     <IssuedInvoiceDetail invoiceId={selectedInvoice} />
+                </div>
+            )}
+        </div>
     </div>
   );
 };
