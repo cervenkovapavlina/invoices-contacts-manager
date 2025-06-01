@@ -30,7 +30,7 @@ class DjangoClient {
     }
 
     get = function(endpoint, okCallback, errorCallback) {
-        let url = DjangoClient.BASE_URL + '/' + endpoint + '/';
+        let url = DjangoClient.BASE_URL + '/' + endpoint;
         this.debug(url)
         fetch(url, {
           method: 'GET',
@@ -42,8 +42,12 @@ class DjangoClient {
         })
         .then(response => response.json())
         .then(data => {
-            this.debug(data);
-            okCallback(data);
+            if (data.message) {
+                throw data.message
+            } else {
+                this.debug(data);
+                okCallback(data);
+            }
         })
         .catch(error => errorCallback(error));
     }
