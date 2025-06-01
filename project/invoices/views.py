@@ -31,28 +31,11 @@ def index(request):
     return JsonResponse({})
 
 
-# @secured_endpoint
+@secured_endpoint
 @csrf_exempt
 def number_row_prefix_list(request):
-    response = JsonResponse(serialize('python', NumberRowPrefix.objects.all()), safe=False)
-    response["Access-Control-Allow-Origin"] = "*"
-    response["Access-Control-Allow-Methods"] = "GET, OPTIONS, FETCH"
-    response["Access-Control-Max-Age"] = "1000"
-    response["Access-Control-Allow-Headers"] = "X-Requested-With, Content-Type"
-    return response
+    return JsonResponse(serialize('python', NumberRowPrefix.objects.all()), safe=False)
 
-
-def report(request):
-    numbers = [1, 2, 3, 4]
-    # numbers = {"number1": 1, "number2": 2, "number3": 3, "number4": 4}
-    # return HttpResponse(json.dumps(numbers))
-    response = HttpResponse(json.dumps(numbers))
-    # response["Access-Control-Allow-Origin"] = "*"
-    # response["Access-Control-Allow-Methods"] = "GET, OPTIONS, FETCH"
-    # response["Access-Control-Max-Age"] = "1000"
-    # response["Access-Control-Allow-Headers"] = "X-Requested-With, Content-Type"
-    # response["Content-Type"] = "application/json"
-    return response
 
 @secured_endpoint
 def number_row_prefix_detail(request, id):
