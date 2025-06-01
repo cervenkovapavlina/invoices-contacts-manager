@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
-function IssuedInvoiceDetail({ invoiceId }) {
+function IssuedInvoiceDetail() {
+    const { id } = useParams()
     const [invoice, setInvoice] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setInvoice(invoiceId);
+        setInvoice(id);
         setLoading(false);
-    }, [invoiceId]);
+    }, [id]);
 
-    if (loading) return <div>Loading invoices...</div>;
+    if (loading) {
+        return <div>Loading invoices...</div>;
+    }
 
     return (
         <div className="invoice-detail">

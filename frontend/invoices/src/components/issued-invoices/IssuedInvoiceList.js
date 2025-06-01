@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import RestClient from "utils/RestClient";
 import IssuedInvoiceModel from "components/issued-invoices/IssuedInvoiceModel";
 import IssuedInvoiceDetail from "components/issued-invoices/IssuedInvoiceDetail";
+import { Link } from "react-router-dom";
+
 
 function IssuedInvoiceList(){
   const [invoices, setInvoices] = useState([]);
@@ -30,7 +32,6 @@ function IssuedInvoiceList(){
 
   return (
     <div className="issued-invoice-list">
-        <div>
         <table>
             <thead>
                 <tr>
@@ -44,7 +45,7 @@ function IssuedInvoiceList(){
             <tbody>
                 {invoices.map((item) => (
                     <tr key={item.id}>
-                        <td onClick={() => setSelectedInvoice(item.id)}>{item.id}</td>
+                        <td><Link to={`/issued-invoice-detail/${item.id}`}>{item.id}</Link></td>
                         <td>{item.invoiceNumber}</td>
                         <td>{item.variableSymbol}</td>
                         <td>{item.issuedDate.toLocaleDateString()}</td>
@@ -53,14 +54,6 @@ function IssuedInvoiceList(){
                 ))}
             </tbody>
         </table>
-        </div>
-        <div>
-            {selectedInvoice && (
-                <div className="issued-invoice-detail">
-                     <IssuedInvoiceDetail invoiceId={selectedInvoice} />
-                </div>
-            )}
-        </div>
     </div>
   );
 };
