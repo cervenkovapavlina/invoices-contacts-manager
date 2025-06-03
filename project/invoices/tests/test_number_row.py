@@ -38,8 +38,36 @@ class NumberRowTest(TestCase):
         number_row_value.save()
         self.assertGreater(number_row_value.id, 0, "number_row_value.id > 0")
         self.assertEqual(number_row_value.value, 1, "number_row_value.value = 1")
-        self.assertEqual(number_row_value.year, self.get_current_year(),
-                         "number_row_value.year = self.get_current_year()")
+        self.assertEqual(number_row_value.year, str(self.get_current_year()),
+                         f"number_row_value.year = {self.get_current_year()}")
+
+    def test_number_row_prefix_name_min_length_valid(self):
+        number_row_prefix = self.prefix(name="Valid")
+        self.assertGreater(number_row_prefix.id, 0, "number_row_prefix.id > 0")
+
+    def test_number_row_prefix_name_too_short(self):
+        invalid_prefix_name_exception = False
+        try:
+            number_row_prefix = self.prefix(name="Name")
+        except ValidationError as e:
+            self.assertEqual(
+                "['Ensure this value has at least 5 characters (it has 4).', 'name: Name']",
+                str(e.messages),
+                f"['Ensure this value has at least 5 characters (it has 4).', 'name: Name'] = {e.messages}")
+            invalid_prefix_name_exception = True
+        self.assertTrue(invalid_prefix_name_exception, "invalid_prefix_name_exception = True")
+
+    def test_number_row_prefix_name_empty_string(self):
+        invalid_prefix_name_exception = False
+        try:
+            number_row_prefix = self.prefix(name="")
+        except ValidationError as e:
+            self.assertEqual(
+                "['Ensure this value has at least 5 characters (it has 0).', 'name: ']",
+                str(e.messages),
+                f"['Ensure this value has at least 5 characters (it has 0).', 'name: '] = {e.messages}")
+            invalid_prefix_name_exception = True
+        self.assertTrue(invalid_prefix_name_exception, "invalid_prefix_name_exception = True")
 
     def test_identical_prefix_for_identical_invoice_type(self):
         prefix = "F"
@@ -50,7 +78,7 @@ class NumberRowTest(TestCase):
             second_number_row_prefix = self.prefix(name="Druha rada faktur", prefix=prefix)
         except ValidationError as e:
             self.assertEqual("Prefix already exists for the selected invoice type.", e.message,
-                             "Prefix already exists for the selected invoice type. = e.message")
+                             f"Prefix already exists for the selected invoice type. = {e.message}")
             unique_exception = True
         self.assertTrue(unique_exception, "unique_exception = True")
 
@@ -58,8 +86,8 @@ class NumberRowTest(TestCase):
         prefix = "F"
         received_invoice_prefix = self.prefix(name="Prijate faktury", prefix=prefix)
         issued_invoice_prefix = self.prefix(name="Vystavene faktury", prefix=prefix, received=False)
-        self.assertEqual(received_invoice_prefix.prefix, "F", "received_invoice_prefix.prefix = F")
-        self.assertEqual(issued_invoice_prefix.prefix, "F", "issued_invoice_prefix.prefix = F")
+        self.assertEqual(received_invoice_prefix.prefix, "F", f"received_invoice_prefix.prefix = {prefix}")
+        self.assertEqual(issued_invoice_prefix.prefix, "F", f"issued_invoice_prefix.prefix = {prefix}")
 
         received_invoice_value = self.value(prefix=received_invoice_prefix, year=2025)
         issued_invoice_value = self.value(prefix=issued_invoice_prefix, year=2025)
