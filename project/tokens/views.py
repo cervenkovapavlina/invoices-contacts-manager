@@ -7,9 +7,6 @@ from django.core.serializers import serialize
 from tokens.utils.generators import generate_token
 
 
-def token_list(request):
-    return JsonResponse(serialize('python', Token.objects.all()), safe=False)
-
 @csrf_exempt
 def token_create(request):
     if request.method == "POST":
