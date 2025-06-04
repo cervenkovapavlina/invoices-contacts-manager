@@ -68,8 +68,31 @@ class InputValidatorTest(TestCase):
         try:
             filled_data = self.validator.validate_input(data, ["name"], {})
         except ValidationError as e:
-            self.assertEqual("Mandatory key 'name' not found.", e.message,
-                             f"Mandatory key 'name' not found. = {e.message}")
+            self.assertEqual("Mandatory key 'name' is missing, None or empty.", e.message,
+                             f"Mandatory key 'name' is missing, None or empty. = {e.message}")
             validation_error = True
         self.assertTrue(validation_error, "validation_error = True")
+
+    def test_mandatory_key_none_raises_error(self):
+        data = {"name": None}
+        validation_error = False
+        try:
+            filled_data = self.validator.validate_input(data, ["name"], {})
+        except ValidationError as e:
+            self.assertEqual("Mandatory key 'name' is missing, None or empty.", e.message,
+                             f"Mandatory key 'name' is missing, None or empty. = {e.message}")
+            validation_error = True
+        self.assertTrue(validation_error, "validation_error = True")
+
+    def test_mandatory_key_empty_string_raises_error(self):
+        data = {"name": ""}
+        validation_error = False
+        try:
+            filled_data = self.validator.validate_input(data, ["name"], {})
+        except ValidationError as e:
+            self.assertEqual("Mandatory key 'name' is missing, None or empty.", e.message,
+                             f"Mandatory key 'name' is missing, None or empty. = {e.message}")
+            validation_error = True
+        self.assertTrue(validation_error, "validation_error = True")
+
 
