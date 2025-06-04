@@ -5,8 +5,8 @@ class InputValidator:
 
     def validate_input(self, data, mandatory_keys, keys_with_defaults):
         for key in mandatory_keys:
-            if key not in data:
-                raise ValidationError(f"Mandatory key '{key}' not found.")
+            if key not in data or data[key] is None or data[key] == "":
+                raise ValidationError(f"Mandatory key '{key}' is missing, None or empty.")
         for key in keys_with_defaults:
             if key not in data or data[key] is None or data[key] == "":
                 if keys_with_defaults[key] is not None:
