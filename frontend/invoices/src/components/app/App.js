@@ -1,5 +1,6 @@
 import './App.css';
 import Layout from 'components/layout/Layout';
+import Home from 'components/home/Home';
 import Data from 'components/data/Data';
 import Data2 from 'components/data/Data2';
 import IssuedInvoiceList from 'components/issued-invoices/IssuedInvoiceList';
@@ -12,6 +13,7 @@ function App() {
          <BrowserRouter>
           <Routes>
             <Route path="/" element={<Layout />}>
+            <Route path="home" element={<Home />} />
             <Route path="data" element={<Data />} />
             <Route path="data2" element={<Data2 />} />
             <Route path="issued-invoices" element={<IssuedInvoiceList />} />
