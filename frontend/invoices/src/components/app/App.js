@@ -1,6 +1,7 @@
 import './App.css';
 import Layout from 'components/layout/Layout';
 import Home from 'components/home/Home';
+import Login from 'components/login/Login';
 import Data from 'components/data/Data';
 import Data2 from 'components/data/Data2';
 import IssuedInvoiceList from 'components/issued-invoices/IssuedInvoiceList';
@@ -18,6 +19,7 @@ function App() {
             <Route path="data2" element={<Data2 />} />
             <Route path="issued-invoices" element={<IssuedInvoiceList />} />
             <Route path="issued-invoice-detail/:id" element={<IssuedInvoiceDetail />} />
+            <Route path="login" element={<Login />} />
             </Route>
           </Routes>
         </BrowserRouter>
