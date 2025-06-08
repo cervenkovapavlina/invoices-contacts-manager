@@ -3,8 +3,6 @@ from django.contrib.auth.models import User
 from tokens.utils.generators import generate_token
 from django.core.exceptions import PermissionDenied
 
-# Create your tests here.
-
 
 class TokenGeneratorTest(TestCase):
 

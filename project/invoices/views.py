@@ -32,7 +32,7 @@ def index(request):
 
 
 @secured_endpoint
-@csrf_exempt
+@csrf_exempt # TODO: Remove when frontend communicates correctly.
 def number_row_prefix_list(request):
     return JsonResponse(serialize('python', NumberRowPrefix.objects.all()), safe=False)
 
@@ -47,7 +47,7 @@ def number_row_prefix_detail(request, id):
         return JsonResponse({"message": "Not found."}, status=404)
 
 
-@csrf_exempt
+@csrf_exempt # TODO: Remove when frontend communicates correctly.
 @secured_endpoint
 def number_row_prefix_create(request):
     if request.method == "POST":
