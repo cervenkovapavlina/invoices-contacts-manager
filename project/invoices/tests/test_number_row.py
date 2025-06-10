@@ -29,15 +29,45 @@ class NumberRowTest(TestCase):
         return number_row_value
 
     def test_default_values(self):
-        number_row_prefix = self.prefix(name="Rada faktur")
+        number_row_prefix = NumberRowPrefix(name="Rada faktur")
+        number_row_prefix.save()
         self.assertGreater(number_row_prefix.id, 0, "number_row_prefix.id > 0")
         self.assertEqual(number_row_prefix.prefix, "", "number_row_prefix.prefix = \"\" ")
         self.assertTrue(number_row_prefix.received, "number_row_prefix.received = True")
-        number_row_value = self.value(prefix=number_row_prefix)
+        number_row_value = NumberRowValue(prefix=number_row_prefix)
+        number_row_value.save()
         self.assertGreater(number_row_value.id, 0, "number_row_value.id > 0")
         self.assertEqual(number_row_value.value, 1, "number_row_value.value = 1")
-        self.assertEqual(number_row_value.year, self.get_current_year(),
-                         "number_row_value.year = self.get_current_year()")
+        self.assertEqual(number_row_value.year, str(self.get_current_year()),
+                         f"number_row_value.year = {self.get_current_year()}")
+
+    def test_number_row_prefix_name_min_length_valid(self):
+        number_row_prefix = self.prefix(name="Valid")
+        self.assertGreater(number_row_prefix.id, 0, "number_row_prefix.id > 0")
+
+    def test_number_row_prefix_name_too_short(self):
+        invalid_prefix_name_exception = False
+        try:
+            number_row_prefix = self.prefix(name="Name")
+        except ValidationError as e:
+            self.assertEqual(
+                "['Ensure this value has at least 5 characters (it has 4).', 'name: Name']",
+                str(e.messages),
+                f"['Ensure this value has at least 5 characters (it has 4).', 'name: Name'] = {e.messages}")
+            invalid_prefix_name_exception = True
+        self.assertTrue(invalid_prefix_name_exception, "invalid_prefix_name_exception = True")
+
+    def test_number_row_prefix_name_empty_string(self):
+        invalid_prefix_name_exception = False
+        try:
+            number_row_prefix = self.prefix(name="")
+        except ValidationError as e:
+            self.assertEqual(
+                "['Ensure this value has at least 5 characters (it has 0).', 'name: ']",
+                str(e.messages),
+                f"['Ensure this value has at least 5 characters (it has 0).', 'name: '] = {e.messages}")
+            invalid_prefix_name_exception = True
+        self.assertTrue(invalid_prefix_name_exception, "invalid_prefix_name_exception = True")
 
     def test_identical_prefix_for_identical_invoice_type(self):
         prefix = "F"
@@ -45,10 +75,10 @@ class NumberRowTest(TestCase):
 
         unique_exception = False
         try:
-            second_number_row_prefix = self.prefix(name="Draha rada faktur", prefix=prefix)
+            second_number_row_prefix = self.prefix(name="Druha rada faktur", prefix=prefix)
         except ValidationError as e:
             self.assertEqual("Prefix already exists for the selected invoice type.", e.message,
-                             "Prefix already exists for the selected invoice type. = e.message")
+                             f"Prefix already exists for the selected invoice type. = {e.message}")
             unique_exception = True
         self.assertTrue(unique_exception, "unique_exception = True")
 
@@ -56,11 +86,11 @@ class NumberRowTest(TestCase):
         prefix = "F"
         received_invoice_prefix = self.prefix(name="Prijate faktury", prefix=prefix)
         issued_invoice_prefix = self.prefix(name="Vystavene faktury", prefix=prefix, received=False)
-        self.assertEqual(received_invoice_prefix.prefix, "F", "received_invoice_prefix.prefix = F")
-        self.assertEqual(issued_invoice_prefix.prefix, "F", "issued_invoice_prefix.prefix = F")
+        self.assertEqual(received_invoice_prefix.prefix, "F", f"received_invoice_prefix.prefix = {prefix}")
+        self.assertEqual(issued_invoice_prefix.prefix, "F", f"issued_invoice_prefix.prefix = {prefix}")
 
-        received_invoice_value = self.value(prefix=received_invoice_prefix, year="2025")
-        issued_invoice_value = self.value(prefix=issued_invoice_prefix, year="2025")
+        received_invoice_value = self.value(prefix=received_invoice_prefix, year=2025)
+        issued_invoice_value = self.value(prefix=issued_invoice_prefix, year=2025)
         self.assertEqual(received_invoice_value.value, 1, "received_invoice_value.value = 1")
         self.assertEqual(issued_invoice_value.value, 1, "issued_invoice_value.value = 1")
         self.assertEqual(received_invoice_value.get_final_value(), "F20250001",
@@ -119,27 +149,27 @@ class NumberRowTest(TestCase):
             self.value(prefix=default_prefix, year=previous_year)
             self.value(prefix=given_prefix, year=previous_year)
 
-        self.assert_first_and_last_value(this_year, default_prefix, count)
-        self.assert_first_and_last_value(this_year, given_prefix, count)
-        self.assert_first_and_last_value(previous_year, default_prefix, count)
-        self.assert_first_and_last_value(previous_year, given_prefix, count)
+        self.assert_first_and_last_value(default_prefix, this_year, count)
+        self.assert_first_and_last_value(given_prefix, this_year, count)
+        self.assert_first_and_last_value(default_prefix, previous_year, count)
+        self.assert_first_and_last_value(given_prefix, previous_year, count)
 
-    def make_invoice_number(self, year, prefix, value):
+    def make_invoice_number(self, prefix, year, value):
         return f"{prefix.prefix}{year}{value:04}"
 
-    def assert_first_and_last_value(self, year, prefix, count):
-        first_value_with_default_prefix = NumberRowValue.objects.filter(prefix=prefix, year=year, value=1)[0]
-        last_value_with_default_prefix = NumberRowValue.objects.filter(prefix=prefix, year=year, value=count - 1)[0]
+    def assert_first_and_last_value(self, prefix, year, count):
+        first_value = NumberRowValue.objects.filter(prefix=prefix, year=year, value=1)[0]
+        last_value = NumberRowValue.objects.filter(prefix=prefix, year=year, value=count - 1)[0]
 
-        first_expected_value = self.make_invoice_number(year, prefix,1)
-        self.assertEqual(first_value_with_default_prefix.get_final_value(), first_expected_value,
-        f"first_value_with_default_prefix.get_final_value() = {first_expected_value}")
-        last_expected_value = self.make_invoice_number(year, prefix, count - 1)
-        self.assertEqual(last_value_with_default_prefix.get_final_value(), last_expected_value,
-                         f"eleventh_value_with_default_prefix_in_this_year.get_final_value() = {last_expected_value}")
+        first_expected_value = self.make_invoice_number(prefix, year, 1)
+        self.assertEqual(first_value.get_final_value(), first_expected_value,
+                         f"first_value.get_final_value() = {first_expected_value}")
+        last_expected_value = self.make_invoice_number(prefix, year, count - 1)
+        self.assertEqual(last_value.get_final_value(), last_expected_value,
+                         f"last_value.get_final_value() = {last_expected_value}")
 
     def get_current_year(self):
-        return str(datetime.now().year)
+        return datetime.now().year
 
     def get_previous_year(self):
-        return str(datetime.now().year - 1)
+        return datetime.now().year - 1
