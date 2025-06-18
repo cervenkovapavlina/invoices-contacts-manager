@@ -17,7 +17,7 @@ function Data() {
 
   useEffect(() => {
       let client = new DjangoClient();
-      client.get('report', okCallback, setError)
+      client.get('report/', okCallback, setError)
   }, []);
 
   if (loading) {

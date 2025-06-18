@@ -14,12 +14,12 @@ function App() {
          <BrowserRouter>
           <Routes>
             <Route path="/" element={<Layout />}>
-            <Route path="home" element={<Home />} />
-            <Route path="data" element={<Data />} />
-            <Route path="data2" element={<Data2 />} />
-            <Route path="issued-invoices" element={<IssuedInvoiceList />} />
-            <Route path="issued-invoice-detail/:id" element={<IssuedInvoiceDetail />} />
-            <Route path="login" element={<Login />} />
+                <Route path="home" element={<Home />} />
+                <Route path="data" element={<Data />} />
+                <Route path="data2" element={<Data2 />} />
+                <Route path="issued-invoices" element={<IssuedInvoiceList />} />
+                <Route path="issued-invoice-detail/:id" element={<IssuedInvoiceDetail />} />
+                <Route path="login" element={<Login />} />
             </Route>
           </Routes>
         </BrowserRouter>
