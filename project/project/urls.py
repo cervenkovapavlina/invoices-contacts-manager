@@ -31,6 +31,7 @@ urlpatterns = [
     path("number_rows/create", invoices_views.number_row_prefix_create, name="number_row_prefix_create"),
     path("number_rows/<id>", invoices_views.number_row_prefix_detail, name="number_row_prefix_detail"),
 
-    path("tokens/create", tokens_views.token_create, name="token_create"),
+    path("tokens/create", tokens_views.token_create, name="token_create")
 
 ]
+

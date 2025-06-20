@@ -31,13 +31,13 @@ def index(request):
     return JsonResponse({})
 
 
-@secured_endpoint
+# @secured_endpoint TODO
 @csrf_exempt # TODO: Remove when frontend communicates correctly.
 def number_row_prefix_list(request):
     return JsonResponse(serialize('python', NumberRowPrefix.objects.all()), safe=False)
 
 
-@secured_endpoint
+# @secured_endpoint TODO
 def number_row_prefix_detail(request, id):
     try:
         number_row_prefix = NumberRowPrefix.objects.get(id=id)
@@ -48,7 +48,7 @@ def number_row_prefix_detail(request, id):
 
 
 @csrf_exempt # TODO: Remove when frontend communicates correctly.
-@secured_endpoint
+# @secured_endpoint TODO
 def number_row_prefix_create(request):
     if request.method == "POST":
         try:
