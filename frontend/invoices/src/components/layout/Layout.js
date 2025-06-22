@@ -20,7 +20,7 @@ const Layout = () => {
                 <Link className="nav-link" to="/home">Home</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/data">Data</Link>
+                <Link className="nav-link" to="/number-rows">Číselné řady</Link>
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/issued-invoices">Issued invoices</Link>
