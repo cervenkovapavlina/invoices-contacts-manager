@@ -13,8 +13,10 @@ function NumberRowForm(){
     const navigate = useNavigate();
     const [newNumberRowId, setNewNumberRowId] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
+    const [loadingMessage, setLoadingMessage] = useState("");
 
     const handleSubmit = (event) => {
+        setLoadingMessage("Loading...");
         event.preventDefault();
         let okCallback = (data) => {navigate(`/number-row-detail/${data.id}`)}
         let errorCallback = (error) => {setErrorMessage(error)}
@@ -75,6 +77,7 @@ function NumberRowForm(){
                   </div>
               </div>
               <button type="submit" className="btn btn-primary">Uložit</button>
+              <span>{loadingMessage}</span>
             </form>
         </div>
     )
