@@ -37,7 +37,6 @@ class DjangoClient {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': this.getCookie('csrftoken'),
           }
         })
         .then(response => response.json())
@@ -51,6 +50,30 @@ class DjangoClient {
         })
         .catch(error => errorCallback(error));
     }
+
+    post = function (endpoint, okCallback, errorCallback, body){
+        let url = DjangoClient.BASE_URL + '/' + endpoint;
+        this.debug(url)
+        fetch(url, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': this.getCookie('csrftoken'),
+          },
+          body: JSON.stringify(body),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                throw data.message
+            } else {
+                this.debug(data);
+                okCallback(data);
+            }
+        })
+        .catch(error => errorCallback(error));
+    };
 }
 
 export default DjangoClient;

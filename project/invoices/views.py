@@ -9,6 +9,8 @@ from django.core.exceptions import ValidationError
 from invoices.utils.InputValidator import InputValidator
 from functools import wraps
 from tokens.models import Token
+from django.db.utils import IntegrityError
+from invoices.utils.Logger import Logger
 
 # Create your views here.
 
@@ -60,7 +62,13 @@ def number_row_prefix_create(request):
             number_row_prefix.save()
             return JsonResponse({"id": number_row_prefix.id})
         except ValidationError as e:
-            return JsonResponse({"message": f"Invalid input. Required data not provided. {e.messages}"}, status=400)
+            errorMessage = f"Invalid input. Required data not provided. {e.messages}"
+            Logger.error(__name__, errorMessage)
+            return JsonResponse({"message": errorMessage}, status=400)
+        except IntegrityError as e:
+            errorMessage = "Save failed."
+            Logger.error(__name__, f"{errorMessage} {e}")
+            return JsonResponse({"message": errorMessage}, status=400)
     return JsonResponse({"message": "Method not allowed."}, status=405)
 
 

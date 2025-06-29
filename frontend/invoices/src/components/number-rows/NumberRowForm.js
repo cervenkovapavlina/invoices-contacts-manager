@@ -12,24 +12,19 @@ function NumberRowForm(){
     const [received, setReceived] = useState(null);
     const navigate = useNavigate();
     const [newNumberRowId, setNewNumberRowId] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        fetch("http://localhost:8000/number_rows/create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ name, prefix, received }),
-        })
-        .then(response=>response.json())
-        .then(data=>{
-            navigate(`/number-row-detail/${data.id}`);
-        })
-        .catch(err => {
-            console.error("Fetch error:", err);
-        })
+        let okCallback = (data) => {navigate(`/number-row-detail/${data.id}`)}
+        let errorCallback = (error) => {setErrorMessage(error)}
+        let client = new DjangoClient();
+        client.post("number_rows/create", okCallback, setErrorMessage, { name, prefix, received })
     };
+
+    if (errorMessage) {
+        return <div>Error: {errorMessage}</div>
+    }
 
     return (
         <div className="number-row-form">
