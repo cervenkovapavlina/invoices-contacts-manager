@@ -9,19 +9,6 @@ function NumberRowDetail() {
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
 
-//    function loadData(){
-//        let client = new DjangoClient();
-//        client.get('number_rows/' + id, (data)=>{
-//            setNumberRow(data);
-//            setLoading(false);
-//        }, (error)=>{
-//            setLoading(false);
-//            setErrorMessage(error);
-//        })
-//    }
-
-
-
     useEffect(()=>{
         DataComponentUtil.loadData('number_rows/' + id, setNumberRow, setLoading, setErrorMessage);
     }, [])
@@ -33,12 +20,12 @@ function NumberRowDetail() {
                     Číselná řada: {numberRow.fields.name}
                 </h2>
                 <form>
-                  <div class="mb-3 mt-3">
-                    <label for="name" class="form-label" >Název číselné řady:</label>
+                  <div className="mb-3 mt-3">
+                    <label htmlFor="name" className="form-label" >Název číselné řady:</label>
                     <input type="text" value={numberRow.fields.name} disabled className="form-control" id="name" name="name"/>
                   </div>
-                  <div class="mb-3 mt-3">
-                    <label for="prefix" class="form-label" >Prefix:</label>
+                  <div className="mb-3 mt-3">
+                    <label htmlFor="prefix" className="form-label" >Prefix:</label>
                     <input type="text" value={numberRow.fields.prefix} disabled className="form-control" id="prefix" name="prefix"/>
                   </div>
                   <div className="mb-3 mt-3">
@@ -80,15 +67,6 @@ function NumberRowDetail() {
     }
 
     return DataComponentUtil.output(loading, errorMessage, generateNumberRowDetail)
-
-//    if (loading) {
-//        return <div>Loading number row detail...</div>;
-//    }
-//
-//    if (errorMessage) {
-//        return <div>Error: {errorMessage}</div>;
-//    }
-
 
 }
 

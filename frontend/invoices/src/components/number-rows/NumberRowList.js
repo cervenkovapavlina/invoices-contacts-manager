@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import DjangoClient from "utils/DjangoClient";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import NumberRowModel from "components/number-rows/NumberRowModel";
 import DataComponentUtil from 'utils/DataComponentUtil';
 
@@ -8,29 +8,7 @@ function NumberRowList(){
     const [numberRows, setNumberRows] = useState([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
-
-//    function loadData(){
-//        let client = new DjangoClient();
-//        client.get("number_rows", (data)=>{
-//            let newNumberRowList = [];
-//            for(let i = 0; i < data.length; i++){
-//                let fields = data[i].fields
-//                let model = new NumberRowModel(
-//                    data[i].pk,
-//                    fields.createdAt,
-//                    fields.deletedAt,
-//                    fields.prefix,
-//                    fields.name,
-//                    fields.received);
-//                newNumberRowList.push(model);
-//            }
-//            setNumberRows(newNumberRowList);
-//            setLoading(false);
-//        }, (error) => {
-//            setLoading(false);
-//            setErrorMessage(error);
-//        })
-//    }
+    const navigate = useNavigate();
 
     function mapDataToModel(data){
         let newNumberRowList = [];
@@ -48,31 +26,24 @@ function NumberRowList(){
         setNumberRows(newNumberRowList);
     }
 
-
-
     function getInvoiceType(received){
         return received ? "Přijaté" : "Vydané";
     }
+
+    const handleClick = () => {
+        navigate("/number-row-create");
+    };
 
     useEffect(()=>{
         DataComponentUtil.loadData("number_rows", mapDataToModel, setLoading, setErrorMessage);
     }, [])
 
-
-//    if (loading) {
-//        return <div>Loading data...</div>;
-//    }
-//
-//    if (errorMessage) {
-//        return <div>Error: {errorMessage}</div>;
-//    }
-
     function generateNumberRowList(){
         return (
             <div className="number-row-list">
-                <h2 className="display-6">Číselné řady</h2>
-                <div className="d-flex justify-content-center mb-3">
-                    <button className="btn btn-primary">Přidat číselnou řadu</button>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                    <h2 className="display-6 mb-0">Číselné řady faktur</h2>
+                    <button className="btn btn-primary" onClick={handleClick}>Přidat číselnou řadu</button>
                 </div>
                 {!numberRows || numberRows.length === 0 ? (
                     <p>No number rows found.</p>
@@ -106,3 +77,6 @@ function NumberRowList(){
 }
 
 export default NumberRowList;
+
+
+
