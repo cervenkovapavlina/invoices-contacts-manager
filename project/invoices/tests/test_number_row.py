@@ -3,6 +3,7 @@ from django.test import TestCase
 from invoices.models import NumberRowPrefix, NumberRowValue
 from django.utils import timezone
 from datetime import datetime
+from django.db.utils import IntegrityError
 
 
 class NumberRowTest(TestCase):
@@ -27,6 +28,12 @@ class NumberRowTest(TestCase):
         number_row_value = NumberRowValue(prefix=prefix, year=str(year))
         number_row_value.save()
         return number_row_value
+
+    def get_current_year(self):
+        return datetime.now().year
+
+    def get_previous_year(self):
+        return datetime.now().year - 1
 
     def test_default_values(self):
         number_row_prefix = NumberRowPrefix(name="Rada faktur")
@@ -168,8 +175,17 @@ class NumberRowTest(TestCase):
         self.assertEqual(last_value.get_final_value(), last_expected_value,
                          f"last_value.get_final_value() = {last_expected_value}")
 
-    def get_current_year(self):
-        return datetime.now().year
 
-    def get_previous_year(self):
-        return datetime.now().year - 1
+    def test_duplicate_name_number_row_raises_error(self):
+        name = "Faktury"
+        duplicate_name_exception = False
+        number_row_prefix = self.prefix(name, "PF")
+        try:
+            duplicate_name_number_row_prefix = self.prefix(name, "VF", received=False)
+        except IntegrityError as e:
+            error_message = "UNIQUE constraint failed: invoices_numberrowprefix.name"
+            self.assertEqual(error_message, str(e), f"{error_message} = {e}")
+            duplicate_name_exception = True
+        self.assertTrue(duplicate_name_exception, "duplicate_name_exception = True")
+
+
