@@ -11,15 +11,14 @@ function NumberRowForm(){
     const [prefix, setPrefix] = useState(null);
     const [received, setReceived] = useState(null);
     const navigate = useNavigate();
-    const [newNumberRowId, setNewNumberRowId] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
     const [loadingMessage, setLoadingMessage] = useState("");
 
     const handleSubmit = (event) => {
-        setLoadingMessage("Loading...");
         event.preventDefault();
-        let okCallback = (data) => {navigate(`/number-row-detail/${data.id}`)}
-        let errorCallback = (error) => {setErrorMessage(error)}
+        setLoadingMessage("Loading...");
+        let okCallback = (data) => {navigate(`/number-row-detail/${data.id}`)};
+        let errorCallback = (error) => {setErrorMessage(error)};
         let client = new DjangoClient();
         client.post("number_rows/create", okCallback, setErrorMessage, { name, prefix, received })
     };
@@ -92,5 +91,3 @@ export default NumberRowForm;
 
 
 
- // Pokud ale používáš React + API, doporučuje se odesílat data pomocí JavaScriptu (fetch, axios) místo form action.
- // Získáš větší kontrolu a neproběhne reload stránky.
