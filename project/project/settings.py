@@ -23,7 +23,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'detailed': {
-            'format': '%(asctime)s | %(name)s | %(levelname)s | %(message)s',
+            'format': '%(asctime)s | %(name)s | %(levelname)s | %(filename)s:%(lineno)d | %(message)s',
             'datefmt': '%Y-%m-%d %H:%M:%S',
         },
     },
@@ -39,11 +39,15 @@ LOGGING = {
             'formatter': 'detailed',
         },
     },
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
+    },
     'loggers': {
-        'django': {
+        'django.server': {
             'handlers': ['console', 'file'],
             'level': 'INFO',
-            'propagate': True,
+            'propagate': False,
         },
     },
 }
