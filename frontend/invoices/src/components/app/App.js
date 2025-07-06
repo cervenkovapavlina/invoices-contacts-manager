@@ -9,7 +9,7 @@ import IssuedInvoiceList from 'components/issued-invoices/IssuedInvoiceList';
 import IssuedInvoiceDetail from 'components/issued-invoices/IssuedInvoiceDetail';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-function App() {
+const App = () => {
   return (
     <div className="App">
          <BrowserRouter>

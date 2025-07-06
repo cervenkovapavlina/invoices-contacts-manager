@@ -3,13 +3,13 @@ class DjangoClient {
     static BASE_URL = 'http://localhost:8000'
     static DEBUG = true;
 
-    debug = function(value) {
+    debug = (value) => {
       if (DjangoClient.DEBUG) {
         console.log('DjangoClient: ', value);
       }
     }
 
-    getCookie = function(name) {
+    getCookie = (name) => {
       let cookieValue = null;
 
       if (document.cookie && document.cookie !== '') {
@@ -29,7 +29,7 @@ class DjangoClient {
       return cookieValue;
     }
 
-    get = function(endpoint, okCallback, errorCallback) {
+    get = (endpoint, okCallback, errorCallback) => {
         let url = DjangoClient.BASE_URL + '/' + endpoint;
         this.debug(url)
         fetch(url, {
@@ -51,7 +51,7 @@ class DjangoClient {
         .catch(error => errorCallback(error));
     }
 
-    post = function (endpoint, okCallback, errorCallback, body){
+    post = (endpoint, okCallback, errorCallback, body) => {
         let url = DjangoClient.BASE_URL + '/' + endpoint;
         this.debug(url)
         fetch(url, {

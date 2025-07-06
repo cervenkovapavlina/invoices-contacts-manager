@@ -4,13 +4,13 @@ import DjangoClient from 'utils/DjangoClient';
 import DataComponentUtil from 'utils/DataComponentUtil';
 import NumberRowModel from "components/number-rows/NumberRowModel";
 
-function NumberRowDetail() {
+const NumberRowDetail = () => {
     const { id } = useParams()
     const [numberRow, setNumberRow] = useState(null);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
 
-    function mapDataToModel(data){
+    const mapDataToModel = (data) => {
         let fields = data.fields;
         let model = new NumberRowModel(
             data.pk,
@@ -22,11 +22,11 @@ function NumberRowDetail() {
         setNumberRow(model);
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         DataComponentUtil.loadData('number_rows/' + id, mapDataToModel, setLoading, setErrorMessage);
     }, [])
 
-    function generateNumberRowDetail(){
+    const generateNumberRowDetail = () => {
         return (
             <div className="number-row-detail">
                 <h2 className="display-6">

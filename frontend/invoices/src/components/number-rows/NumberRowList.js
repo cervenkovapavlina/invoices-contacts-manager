@@ -4,13 +4,13 @@ import { Link, useNavigate } from "react-router-dom";
 import NumberRowModel from "components/number-rows/NumberRowModel";
 import DataComponentUtil from 'utils/DataComponentUtil';
 
-function NumberRowList(){
+const NumberRowList = () => {
     const [numberRows, setNumberRows] = useState([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
     const navigate = useNavigate();
 
-    function mapDataToModel(data){
+    const mapDataToModel = (data) => {
         let newNumberRowList = [];
         for(let i = 0; i < data.length; i++){
             let fields = data[i].fields
@@ -26,7 +26,7 @@ function NumberRowList(){
         setNumberRows(newNumberRowList);
     }
 
-    function getInvoiceType(received){
+    const getInvoiceType = (received) => {
         return received ? "Přijaté" : "Vydané";
     }
 
@@ -34,11 +34,11 @@ function NumberRowList(){
         navigate("/number-row-create");
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         DataComponentUtil.loadData("number_rows", mapDataToModel, setLoading, setErrorMessage);
     }, [])
 
-    function generateNumberRowList(){
+    const generateNumberRowList = () => {
         return (
             <div className="number-row-list">
                 <div className="d-flex justify-content-between align-items-center mb-3">

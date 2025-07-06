@@ -6,7 +6,7 @@ import DataComponentUtil from 'utils/DataComponentUtil';
 
 
 
-function NumberRowForm(){
+const NumberRowForm = () => {
     const [name, setName] = useState(null);
     const [prefix, setPrefix] = useState(null);
     const [received, setReceived] = useState(null);
