@@ -10,7 +10,8 @@ function Login({ onLogin }) {
     e.preventDefault();
     if (username === 'user' && password === 'pass') {
       onLogin();
-      navigate('/data');
+      sessionStorage.setItem("isAuthenticated", true); // TODO Bezpecnostni riziko, jde obejit nastavenim primo v konzoli
+      navigate('/home');
     } else {
       alert('Invalid credentials');
     }

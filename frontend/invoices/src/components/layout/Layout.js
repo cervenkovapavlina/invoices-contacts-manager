@@ -1,6 +1,19 @@
 import { Outlet, Link } from "react-router-dom";
 
-const Layout = () => {
+const Layout = ({ isAuthenticated }) => {
+    // const [links, setLinks] = useState(null);
+    console.log(isAuthenticated);
+
+  const links = isAuthenticated ? [
+    {"url":"/home", "name":"Home"},
+    {"url":"/data", "name":"Data"},
+    {"url":"/issued-invoices", "name":"Issued invoices"},
+    {"url":"/logout", "name":"Logout"}]
+   : [{"url":"/login", "name":"Login"}];
+
+   console.log(links);
+
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -16,18 +29,11 @@ const Layout = () => {
           </button>
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto">
-              <li className="nav-item">
-                <Link className="nav-link" to="/home">Home</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/data">Data</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/issued-invoices">Issued invoices</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/login">Login</Link>
-              </li>
+                {links.map((item) => (
+                    <li className="nav-item" key={item.url}>
+                        <Link className="nav-link" to={item.url}>{item.name}</Link>
+                    </li>
+                ))}
             </ul>
           </div>
         </div>
