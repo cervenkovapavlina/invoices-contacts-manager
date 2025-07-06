@@ -1,3 +1,5 @@
+import time
+
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.core.serializers import serialize
@@ -11,6 +13,7 @@ from functools import wraps
 from tokens.models import Token
 from django.db.utils import IntegrityError
 from invoices.utils.Logger import Logger
+import time
 
 # Create your views here.
 
@@ -59,6 +62,7 @@ def number_row_prefix_create(request):
             filled_data = validator.validate_input(json_data, ["name"], {"prefix": "", "received": True})
             number_row_prefix = NumberRowPrefix(prefix=filled_data["prefix"], name=filled_data["name"],
                                                 received=filled_data["received"])
+            # time.sleep(5)
             number_row_prefix.save()
             return JsonResponse({"id": number_row_prefix.id})
         except ValidationError as e:

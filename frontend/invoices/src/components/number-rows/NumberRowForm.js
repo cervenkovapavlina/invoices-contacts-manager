@@ -12,15 +12,21 @@ const NumberRowForm = () => {
     const [received, setReceived] = useState(null);
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState(null);
-    const [loadingMessage, setLoadingMessage] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        setLoadingMessage("Loading...");
-        let okCallback = (data) => {navigate(`/number-row-detail/${data.id}`)};
-        let errorCallback = (error) => {setErrorMessage(error)};
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setLoading(true);
         let client = new DjangoClient();
-        client.post("number_rows/create", okCallback, setErrorMessage, { name, prefix, received })
+        let okCallback = (data) => {
+            setLoading(false);
+            navigate(`/number-row-detail/${data.id}`);
+        };
+        let errorCallback = (error) => {
+            setLoading(false);
+            setErrorMessage(error);
+        };
+        client.post("number_rows/create", okCallback, setErrorMessage, { name, prefix, received });
     };
 
     if (errorMessage) {
@@ -75,8 +81,14 @@ const NumberRowForm = () => {
                     </div>
                   </div>
               </div>
-              <button type="submit" className="btn btn-primary">Uložit</button>
-              <span>{loadingMessage}</span>
+              {loading ? (
+                <button className="btn btn-primary" disabled>
+                    <span className="spinner-border spinner-border-sm"></span>
+                    Loading...
+                </button>
+              ) : (
+                <button type="submit" className="btn btn-primary">Uložit</button>
+              )}
             </form>
         </div>
     )
