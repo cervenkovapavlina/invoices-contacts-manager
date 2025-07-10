@@ -5,7 +5,6 @@ import NumberRowModel from "components/number-rows/NumberRowModel";
 import DataComponentUtil from 'utils/DataComponentUtil';
 
 
-
 const NumberRowForm = () => {
     const [name, setName] = useState(null);
     const [prefix, setPrefix] = useState(null);
@@ -17,16 +16,13 @@ const NumberRowForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         setLoading(true);
-        let client = new DjangoClient();
-        let okCallback = (data) => {
-            setLoading(false);
-            navigate(`/number-row-detail/${data.id}`);
-        };
-        let errorCallback = (error) => {
-            setLoading(false);
-            setErrorMessage(error);
-        };
-        client.post("number_rows/create", okCallback, setErrorMessage, { name, prefix, received });
+        DataComponentUtil.sendData(
+            "number_rows/create",
+            { name, prefix, received },
+            navigate,
+            "number-row-detail",
+            setLoading,
+            setErrorMessage);
     };
 
     if (errorMessage) {
