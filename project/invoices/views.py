@@ -25,7 +25,9 @@ def secured_endpoint(endpoint):
         if Token.objects.filter(token=token).count() > 0:
             return endpoint(request, *args, **kwargs)
         else:
-            return JsonResponse({"message": "Invalid token."}, status=401)
+            error_message = "Invalid token."
+            Logger.error(__name__, error_message)
+            return JsonResponse({"message": error_message}, status=401)
 
     return wrapper
 
@@ -48,7 +50,9 @@ def number_row_prefix_detail(request, id):
         data = serialize('python', [number_row_prefix])
         return JsonResponse(data[0], safe=False)
     except:
-        return JsonResponse({"message": "Not found."}, status=404)
+        error_message = "Not found."
+        Logger.error(__name__, error_message)
+        return JsonResponse({"message": error_message}, status=404)
 
 
 @csrf_exempt # TODO: Remove when frontend communicates correctly.
@@ -71,6 +75,8 @@ def number_row_prefix_create(request):
             error_message = "Save failed."
             Logger.error(__name__, f"{error_message} {e}")
             return JsonResponse({"message": error_message}, status=400)
-    return JsonResponse({"message": "Method not allowed."}, status=405)
+    error_message = "Method not allowed."
+    Logger.error(__name__, error_message)
+    return JsonResponse({"message": error_message}, status=405)
 
 
