@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SessionHelper from 'utils/SessionHelper';
+import DjangoClient from 'utils/DjangoClient';
 
 function Login({ onLogin }) {
   const [username, setUsername] = useState('');
@@ -9,13 +10,20 @@ function Login({ onLogin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (username === 'user' && password === 'pass') {
-      onLogin();
-      SessionHelper.open();
-      navigate('/home');
-    } else {
-      alert('Invalid credentials');
-    }
+    let okCallback = (data) => {
+        console.log(data);
+        onLogin();
+        SessionHelper.open();
+        SessionHelper.setToken(data.token);
+        navigate('/home');
+    };
+    let errorCallback = (error) => {
+        console.log(error);
+        alert('Invalid credentials');
+    };
+    let body = {"user_name": username, "password": password};
+    let client = new DjangoClient();
+    client.post("tokens/create", okCallback, errorCallback, body);
   };
 
   return (

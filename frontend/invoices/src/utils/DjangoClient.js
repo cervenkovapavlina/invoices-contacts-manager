@@ -1,3 +1,5 @@
+import SessionHelper from 'utils/SessionHelper';
+
 
 class DjangoClient {
     static BASE_URL = 'http://localhost:8000'
@@ -38,6 +40,7 @@ class DjangoClient {
           headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': this.getCookie('csrftoken'),
+            'Token': SessionHelper.getToken(), // TODO
           }
         })
         .then(response => response.json())
@@ -51,6 +54,32 @@ class DjangoClient {
         })
         .catch(error => errorCallback(error));
     }
+
+    post = (endpoint, okCallback, errorCallback, body) => {
+        let url = DjangoClient.BASE_URL + '/' + endpoint;
+        this.debug(url)
+        fetch(url, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            //'Token': SessionHelper.getToken(), TODO
+          },
+          body: JSON.stringify(body),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                throw data.message
+            } else {
+                this.debug(data);
+                okCallback(data);
+            }
+        })
+        .catch(error => errorCallback(error));
+    };
+
 }
 
 export default DjangoClient;

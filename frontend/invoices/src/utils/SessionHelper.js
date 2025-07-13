@@ -1,5 +1,6 @@
 
 const SESSION_FLAG = "isAuthenticated";
+const TOKEN = "token";
 
 class SessionHelper{
 
@@ -13,8 +14,16 @@ class SessionHelper{
 
     static isOpen(){
         let flag = sessionStorage.getItem(SESSION_FLAG);
-        return flag.toLowerCase() === "true"
+        return flag && flag.toLowerCase() === "true"
     };
+
+    static setToken(token){
+        sessionStorage.setItem(TOKEN, token);
+    }
+
+    static getToken(){
+        return sessionStorage.getItem(TOKEN)
+    }
 
 
 }
