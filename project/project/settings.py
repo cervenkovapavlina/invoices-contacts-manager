@@ -13,10 +13,20 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from pathlib import Path
+import sys
+
+def is_testing():
+    return 'test' in sys.argv
+
+def get_log_filename():
+    if is_testing():
+        return 'django_test.log'
+    else:
+        return 'django_dev.log'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-LOG_FILE = os.path.join(BASE_DIR, 'logs/django.log')
+LOG_FILE = os.path.join(BASE_DIR, 'logs/' + get_log_filename())
 
 LOGGING = {
     'version': 1,

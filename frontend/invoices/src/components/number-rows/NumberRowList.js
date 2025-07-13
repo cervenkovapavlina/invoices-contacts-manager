@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import DjangoClient from "utils/DjangoClient";
 import { Link, useNavigate } from "react-router-dom";
 import NumberRowModel from "components/number-rows/NumberRowModel";
@@ -9,6 +9,7 @@ const NumberRowList = () => {
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
     const navigate = useNavigate();
+    const loadedRef = useRef(false);
 
     const mapDataToModel = (data) => {
         let newNumberRowList = [];
@@ -35,7 +36,10 @@ const NumberRowList = () => {
     };
 
     useEffect(() => {
-        DataComponentUtil.loadData("number_rows", mapDataToModel, setLoading, setErrorMessage);
+        if (loadedRef.current === false){
+            loadedRef.current = true;
+            DataComponentUtil.loadData("number_rows", mapDataToModel, setLoading, setErrorMessage);
+        }
     }, [])
 
     const generateNumberRowList = () => {
