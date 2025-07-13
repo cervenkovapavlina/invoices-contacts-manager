@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 import invoices.views as invoices_views
+import tokens.views as tokens_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -30,7 +31,7 @@ urlpatterns = [
     path("number_rows/create", invoices_views.number_row_prefix_create, name="number_row_prefix_create"),
     path("number_rows/<id>", invoices_views.number_row_prefix_detail, name="number_row_prefix_detail"),
 
+    path("tokens/create", tokens_views.token_create, name="token_create"),
     path("report/", invoices_views.report, name="report")
 
 ]
-
