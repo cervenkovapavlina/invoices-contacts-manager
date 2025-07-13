@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import RestClient from "utils/RestClient";
-import IssuedInvoiceModel from "components/issued-invoices/IssuedInvoiceModel";
-import IssuedInvoiceDetail from "components/issued-invoices/IssuedInvoiceDetail";
 import { Link } from "react-router-dom";
 import DjangoClient from 'utils/DjangoClient';
 

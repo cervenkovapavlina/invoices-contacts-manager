@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
+import SessionHelper from 'utils/SessionHelper';
 
 function Logout({ onLogout }) {
   const navigate = useNavigate();
 
   onLogout();
-  sessionStorage.setItem("isAuthenticated", false); // TODO Bezpecnostni riziko, jde obejit nastavenim primo v konzoli
+  SessionHelper.close();
   navigate('/login');
 
   return (

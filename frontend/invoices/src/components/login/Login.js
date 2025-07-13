@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SessionHelper from 'utils/SessionHelper';
 
 function Login({ onLogin }) {
   const [username, setUsername] = useState('');
@@ -10,7 +11,7 @@ function Login({ onLogin }) {
     e.preventDefault();
     if (username === 'user' && password === 'pass') {
       onLogin();
-      sessionStorage.setItem("isAuthenticated", true); // TODO Bezpecnostni riziko, jde obejit nastavenim primo v konzoli
+      SessionHelper.open();
       navigate('/home');
     } else {
       alert('Invalid credentials');

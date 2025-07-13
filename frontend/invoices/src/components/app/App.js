@@ -3,15 +3,16 @@ import Layout from 'components/layout/Layout';
 import Home from 'components/home/Home';
 import Login from 'components/login/Login';
 import Logout from 'components/logout/Logout';
+import SessionHelper from 'utils/SessionHelper';
 import Data from 'components/data/Data';
 import PrivateRoute from 'components/private-route/PrivateRoute';
 import IssuedInvoiceList from 'components/issued-invoices/IssuedInvoiceList';
 import IssuedInvoiceDetail from 'components/issued-invoices/IssuedInvoiceDetail';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState } from 'react';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(sessionStorage.getItem("isAuthenticated")); // TODO Do produkce zmenit na false
+  const [isAuthenticated, setIsAuthenticated] = useState(SessionHelper.isOpen()); // TODO Do produkce zmenit na false
   // const [isAuthenticated, setIsAuthenticated] = useState(true); // Do produkce zmenit na false
 
   return (

@@ -1,8 +1,9 @@
 import { Outlet, Link } from "react-router-dom";
 
+
 const Layout = ({ isAuthenticated }) => {
     // const [links, setLinks] = useState(null);
-    console.log(isAuthenticated);
+    console.log(typeof(isAuthenticated));
 
   const links = isAuthenticated ? [
     {"url":"/home", "name":"Home"},
