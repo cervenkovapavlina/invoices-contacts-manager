@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SessionHelper from 'utils/SessionHelper';
 import DjangoClient from 'utils/DjangoClient';
-import FormSingleRow from 'components/common/FormSingleRow';
-import NarrowContent from 'components/common/NarrowContent';
+import FormSingleRow from 'components/shared/FormSingleRow';
+import NarrowContent from 'components/shared/NarrowContent';
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -42,6 +42,7 @@ const Login = ({ onLogin }) => {
                 <FormSingleRow
                     label="Heslo"
                     id="password"
+                    type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
