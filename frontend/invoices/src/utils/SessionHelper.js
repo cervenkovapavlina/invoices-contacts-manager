@@ -1,8 +1,7 @@
-
 const SESSION_FLAG = "isAuthenticated";
 const TOKEN = "token";
 
-class SessionHelper{
+class SessionHelper {
 
     static open(){
         sessionStorage.setItem(SESSION_FLAG, true); // TODO Bezpecnostni riziko, jde obejit nastavenim primo v konzoli

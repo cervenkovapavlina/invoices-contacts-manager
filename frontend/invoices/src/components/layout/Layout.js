@@ -1,25 +1,17 @@
 import { Outlet, Link } from "react-router-dom";
 
-
 const Layout = ({ isAuthenticated }) => {
-    // const [links, setLinks] = useState(null);
-    console.log(typeof(isAuthenticated));
 
   const links = isAuthenticated ? [
-    {"url":"/home", "name":"Home"},
-    {"url":"/data", "name":"Data"},
-    {"url":"/issued-invoices", "name":"Issued invoices"},
-    {"url":"/logout", "name":"Logout"}]
-   : [{"url":"/login", "name":"Login"}];
-
-   console.log(links);
-
+    {"url":"/home", "name":"Domů"},
+    {"url":"/issued-invoices", "name":"Vydané faktury"},
+    {"url":"/logout", "name":"Odhlásit se"}]
+   : [{"url":"/login", "name":"Přihlásit se"}];
 
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container-fluid">
-          <Link className="navbar-brand" to="#">MySite</Link>
           <button
             className="navbar-toggler"
             type="button"
@@ -40,54 +32,27 @@ const Layout = ({ isAuthenticated }) => {
         </div>
       </nav>
 
-      <header className="bg-primary text-white text-center py-5">
+      <header className="bg-primary text-white text-center py-4">
         <div className="container">
-          <h1 className="display-4">Welcome to My Bootstrap Page</h1>
-          <p className="lead">This is a simple, responsive page using Bootstrap 5.</p>
+           <div className="app-title fs-4">Fakturos – přehledná evidence faktur a kontaktů</div>
         </div>
       </header>
 
       <main className="container my-5">
         <div className="row">
-          <div className="col-md-3" />
-          <div className="col-md-6">
+          <div className="col-md-1" />
+          <div className="col-md-10">
             <Outlet />
           </div>
-          <div className="col-md-3" />
+          <div className="col-md-1" />
         </div>
       </main>
 
       <footer className="bg-dark text-white text-center py-3">
-        <p className="mb-0">&copy; 2025 MySite. All rights reserved.</p>
+        <p className="mb-0">Fakturos &copy; 2025</p>
       </footer>
     </>
   );
 };
 
 export default Layout;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

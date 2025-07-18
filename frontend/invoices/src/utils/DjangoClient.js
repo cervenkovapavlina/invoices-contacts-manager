@@ -1,6 +1,5 @@
 import SessionHelper from 'utils/SessionHelper';
 
-
 class DjangoClient {
     static BASE_URL = 'http://localhost:8000'
     static DEBUG = true;

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import SessionHelper from 'utils/SessionHelper';
 
-function Logout({ onLogout }) {
+const Logout = ({ onLogout }) => {
   const navigate = useNavigate();
 
   onLogout();
@@ -11,9 +11,8 @@ function Logout({ onLogout }) {
   navigate('/login');
 
   return (
-    <Link className="nav-link" to="/login">Login</Link>
+    <Link className="nav-link" to="/login">Přihlásit se</Link>
   );
 }
 
 export default Logout;
-
