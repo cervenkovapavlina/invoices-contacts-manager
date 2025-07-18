@@ -77,8 +77,7 @@ class DjangoClient {
             }
         })
         .catch(error => errorCallback(error));
-    };
-
+    }
 }
 
 export default DjangoClient;

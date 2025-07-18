@@ -1,7 +1,6 @@
 import { Outlet, Link } from "react-router-dom";
 
 const Layout = ({ isAuthenticated }) => {
-
   const links = isAuthenticated ? [
     {"url":"/home", "name":"Domů"},
     {"url":"/issued-invoices", "name":"Vydané faktury"},

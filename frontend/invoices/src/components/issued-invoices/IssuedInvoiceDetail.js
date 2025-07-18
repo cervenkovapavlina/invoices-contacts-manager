@@ -20,7 +20,7 @@ const IssuedInvoiceDetail = () => {
     }
 
     useEffect(()=>{
-        loadData()
+        loadData();
     }, [])
 
     if (loading) {
@@ -39,6 +39,6 @@ const IssuedInvoiceDetail = () => {
             <p>{invoice.fields.name}</p>
         </div>
     );
-}
+};
 
 export default IssuedInvoiceDetail;

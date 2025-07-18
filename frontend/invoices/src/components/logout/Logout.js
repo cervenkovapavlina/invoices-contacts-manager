@@ -13,6 +13,6 @@ const Logout = ({ onLogout }) => {
   return (
     <Link className="nav-link" to="/login">Přihlásit se</Link>
   );
-}
+};
 
 export default Logout;

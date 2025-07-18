@@ -6,8 +6,6 @@ class IssuedInvoiceModel {
         this.issuedDate = issuedDate;
         this.customer = customer;
     }
-
-
 }
 
 export default IssuedInvoiceModel;
