@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import NumberRowModel from "components/number-rows/NumberRowModel";
 import DataComponentUtil from 'utils/DataComponentUtil';
 
-
 const NumberRowForm = () => {
     const [name, setName] = useState(null);
     const [prefix, setPrefix] = useState(null);
@@ -88,14 +87,6 @@ const NumberRowForm = () => {
             </form>
         </div>
     )
-
-
-
 }
 
-
-
 export default NumberRowForm;
-
-
-

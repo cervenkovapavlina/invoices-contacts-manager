@@ -77,10 +77,6 @@ const NumberRowList = () => {
 
     return DataComponentUtil.output(loading, errorMessage, generateNumberRowList)
 
-
 }
 
 export default NumberRowList;
-
-
-

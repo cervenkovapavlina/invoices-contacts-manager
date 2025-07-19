@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import DjangoClient from 'utils/DjangoClient';
 import DataComponentUtil from 'utils/DataComponentUtil';
 import NumberRowModel from "components/number-rows/NumberRowModel";
 
 const NumberRowDetail = () => {
-    const { id } = useParams()
+    const { id } = useParams();
     const [numberRow, setNumberRow] = useState(null);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
+    const loadedRef = useRef(false);
 
     const mapDataToModel = (data) => {
         let fields = data.fields;
@@ -23,7 +24,10 @@ const NumberRowDetail = () => {
     }
 
     useEffect(() => {
-        DataComponentUtil.loadData('number_rows/' + id, mapDataToModel, setLoading, setErrorMessage);
+        if (loadedRef.current === false){
+            loadedRef.current = true;
+            DataComponentUtil.loadData('number_rows/' + id, mapDataToModel, setLoading, setErrorMessage);
+        }
     }, [])
 
     const generateNumberRowDetail = () => {

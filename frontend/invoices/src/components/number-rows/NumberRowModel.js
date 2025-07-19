@@ -1,4 +1,3 @@
-
 class NumberRowModel {
     constructor(id, createdAt, deletedAt, prefix, name, received){
         this.id = id;
@@ -7,11 +6,7 @@ class NumberRowModel {
         this.prefix = prefix;
         this.name = name;
         this.received = received;
-
     }
-
-
 }
 
 export default NumberRowModel;
-
