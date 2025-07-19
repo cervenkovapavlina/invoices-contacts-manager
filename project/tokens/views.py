@@ -5,7 +5,7 @@ from invoices.utils.InputValidator import InputValidator
 from tokens.models import Token
 from django.core.serializers import serialize
 from tokens.utils.generators import generate_token
-
+from invoices.utils.Logger import Logger
 
 @csrf_exempt
 def token_create(request):
@@ -17,7 +17,11 @@ def token_create(request):
             token = generate_token(filled_data["user_name"], filled_data["password"])
             return JsonResponse({"token": token.token})
         except Exception as e:
-            return JsonResponse({"message": f"Invalid input. Required data not provided. {e}"}, status=400)
-    return JsonResponse({"message": "Method not allowed."}, status=405)
+            error_message = f"Invalid input. Required data not provided. {e}"
+            Logger.error(__name__, error_message)
+            return JsonResponse({"message": error_message}, status=400)
+    error_message = "Method not allowed."
+    Logger.error(__name__, error_message)
+    return JsonResponse({"message": error_message}, status=405)
 
 
