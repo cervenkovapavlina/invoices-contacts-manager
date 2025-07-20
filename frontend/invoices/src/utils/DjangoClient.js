@@ -38,7 +38,7 @@ class DjangoClient {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            'Token': SessionHelper.getToken(),
+            'Authentication-Token': SessionHelper.getAuthenticationToken(),
           }
         })
         .then(response => response.json())
@@ -61,8 +61,8 @@ class DjangoClient {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': this.getCookie('csrftoken'),
-            'Token': SessionHelper.getToken(),
+            'X-CSRFToken': SessionHelper.getCsrfToken(),
+            'Authentication-Token': SessionHelper.getAuthenticationToken(),
           },
           body: JSON.stringify(body),
         })
