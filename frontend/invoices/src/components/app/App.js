@@ -5,6 +5,9 @@ import Login from 'components/login/Login';
 import Logout from 'components/logout/Logout';
 import SessionHelper from 'utils/SessionHelper';
 import PrivateRoute from 'components/private-route/PrivateRoute';
+import NumberRowList from 'components/number-rows/NumberRowList';
+import NumberRowDetail from 'components/number-rows/NumberRowDetail';
+import NumberRowForm from 'components/number-rows/NumberRowForm';
 import IssuedInvoiceList from 'components/issued-invoices/IssuedInvoiceList';
 import IssuedInvoiceDetail from 'components/issued-invoices/IssuedInvoiceDetail';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -23,6 +26,30 @@ const App = () => {
                   element={
                     <PrivateRoute isAuthenticated={isAuthenticated}>
                       <Home />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/number-rows"
+                  element={
+                    <PrivateRoute isAuthenticated={isAuthenticated}>
+                      <NumberRowList />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/number-row-detail/:id"
+                  element={
+                    <PrivateRoute isAuthenticated={isAuthenticated}>
+                      <NumberRowDetail />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/number-row-create"
+                  element={
+                    <PrivateRoute isAuthenticated={isAuthenticated}>
+                      <NumberRowForm />
                     </PrivateRoute>
                   }
                 />

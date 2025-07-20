@@ -4,6 +4,7 @@ const Layout = ({ isAuthenticated }) => {
   const links = isAuthenticated ? [
     {"url":"/home", "name":"Úvodní stránka"},
     {"url":"/issued-invoices", "name":"Vydané faktury"},
+    {"url":"/number-rows", "name":"Číselné řady"},
     {"url":"/logout", "name":"Odhlásit se"}]
    : [{"url":"/login", "name":"Přihlásit se"}];
 

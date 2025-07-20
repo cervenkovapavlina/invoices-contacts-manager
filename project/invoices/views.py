@@ -1,3 +1,5 @@
+import time
+
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.core.serializers import serialize
@@ -9,6 +11,8 @@ from django.core.exceptions import ValidationError
 from invoices.utils.InputValidator import InputValidator
 from functools import wraps
 from tokens.models import Token
+from django.db.utils import IntegrityError
+from invoices.utils.Logger import Logger
 
 # Create your views here.
 
@@ -21,14 +25,11 @@ def secured_endpoint(endpoint):
         if Token.objects.filter(token=token).count() > 0:
             return endpoint(request, *args, **kwargs)
         else:
-            return JsonResponse({"message": "Invalid token."}, status=401)
+            error_message = "Invalid token."
+            Logger.error(__name__, error_message)
+            return JsonResponse({"message": error_message}, status=401)
 
     return wrapper
-
-
-def report(request):
-    numbers = [1, 2, 3]
-    return HttpResponse(json.dumps(numbers))
 
 
 @secured_endpoint
@@ -49,7 +50,9 @@ def number_row_prefix_detail(request, id):
         data = serialize('python', [number_row_prefix])
         return JsonResponse(data[0], safe=False)
     except:
-        return JsonResponse({"message": "Not found."}, status=404)
+        error_message = "Not found."
+        Logger.error(__name__, error_message)
+        return JsonResponse({"message": error_message}, status=404)
 
 
 @csrf_exempt # TODO: Remove when frontend communicates correctly.
@@ -65,8 +68,15 @@ def number_row_prefix_create(request):
             number_row_prefix.save()
             return JsonResponse({"id": number_row_prefix.id})
         except ValidationError as e:
-            return JsonResponse({"message": f"Invalid input. Required data not provided. {e.messages}"}, status=400)
-    return JsonResponse({"message": "Method not allowed."}, status=405)
-
+            error_message = f"Invalid input. Required data not provided. {e.messages}"
+            Logger.error(__name__, error_message)
+            return JsonResponse({"message": error_message}, status=400)
+        except IntegrityError as e:
+            error_message = "Save failed."
+            Logger.error(__name__, f"{error_message} {e}")
+            return JsonResponse({"message": error_message}, status=400)
+    error_message = "Method not allowed."
+    Logger.error(__name__, error_message)
+    return JsonResponse({"message": error_message}, status=405)
 
 
