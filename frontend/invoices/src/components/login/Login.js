@@ -13,14 +13,13 @@ const Login = ({ onLogin }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     let okCallback = (data) => {
-        console.log(data);
         onLogin();
         SessionHelper.open();
         SessionHelper.setToken(data.token);
         navigate('/home');
     };
     let errorCallback = (error) => {
-        console.log(error);
+        console.error(error);
         alert('Invalid credentials');
     };
     let body = {"user_name": username, "password": password};
