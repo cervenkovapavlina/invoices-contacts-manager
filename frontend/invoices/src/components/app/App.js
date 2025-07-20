@@ -11,8 +11,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React, { useState } from 'react';
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(SessionHelper.isOpen()); // TODO Do produkce zmenit na false
-  // const [isAuthenticated, setIsAuthenticated] = useState(true); // Do produkce zmenit na false
+  const [isAuthenticated, setIsAuthenticated] = useState(SessionHelper.isOpen());
 
   return (
     <div className="App">

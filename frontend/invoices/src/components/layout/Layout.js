@@ -2,7 +2,7 @@ import { Outlet, Link } from "react-router-dom";
 
 const Layout = ({ isAuthenticated }) => {
   const links = isAuthenticated ? [
-    {"url":"/home", "name":"Domů"},
+    {"url":"/home", "name":"Úvodní stránka"},
     {"url":"/issued-invoices", "name":"Vydané faktury"},
     {"url":"/logout", "name":"Odhlásit se"}]
    : [{"url":"/login", "name":"Přihlásit se"}];
