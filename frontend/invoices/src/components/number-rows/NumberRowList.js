@@ -45,7 +45,7 @@ const NumberRowList = () => {
         return (
             <div className="number-row-list">
                 <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h2 className="display-6 mb-0">Číselné řady faktur</h2>
+                    <h1>Číselné řady faktur</h1>
                     <button className="btn btn-primary" onClick={handleClick}>Přidat číselnou řadu</button>
                 </div>
                 {!numberRows || numberRows.length === 0 ? (
