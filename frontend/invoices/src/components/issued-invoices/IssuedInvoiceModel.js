@@ -1,4 +1,3 @@
-
 class IssuedInvoiceModel {
     constructor(id, invoiceNumber, variableSymbol, issuedDate, customer) {
         this.id = id;
@@ -7,8 +6,6 @@ class IssuedInvoiceModel {
         this.issuedDate = issuedDate;
         this.customer = customer;
     }
-
-
 }
 
 export default IssuedInvoiceModel;

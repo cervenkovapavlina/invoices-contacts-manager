@@ -34,4 +34,3 @@ urlpatterns = [
     path("tokens/create", tokens_views.token_create, name="token_create")
 
 ]
-

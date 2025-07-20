@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import DjangoClient from 'utils/DjangoClient';
 
-function IssuedInvoiceDetail() {
+const IssuedInvoiceDetail = () => {
     const { id } = useParams()
     const [invoice, setInvoice] = useState(null);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
 
-    function loadData(){
+    const loadData = () => {
         let client = new DjangoClient();
         client.get('number_rows/' + id, (data)=>{
             setInvoice(data);
@@ -20,7 +20,7 @@ function IssuedInvoiceDetail() {
     }
 
     useEffect(()=>{
-        loadData()
+        loadData();
     }, [])
 
     if (loading) {
@@ -39,6 +39,6 @@ function IssuedInvoiceDetail() {
             <p>{invoice.fields.name}</p>
         </div>
     );
-}
+};
 
 export default IssuedInvoiceDetail;

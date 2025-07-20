@@ -1,3 +1,4 @@
+import SessionHelper from 'utils/SessionHelper';
 
 class DjangoClient {
     static BASE_URL = 'http://localhost:8000'
@@ -37,6 +38,7 @@ class DjangoClient {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
+            'Token': SessionHelper.getToken(),
           }
         })
         .then(response => response.json())
@@ -60,6 +62,7 @@ class DjangoClient {
           headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': this.getCookie('csrftoken'),
+            'Token': SessionHelper.getToken(),
           },
           body: JSON.stringify(body),
         })

@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 from pathlib import Path
 import sys
+from corsheaders.defaults import default_headers
 
 def is_testing():
     return 'test' in sys.argv
@@ -23,6 +24,7 @@ def get_log_file_name():
         return 'django_test.log'
     else:
         return 'django_dev.log'
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -108,6 +110,20 @@ CSRF_TRUSTED_ORIGINS = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "Token",
+    "authorization",
+]
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
 
 ROOT_URLCONF = 'project.urls'
 
