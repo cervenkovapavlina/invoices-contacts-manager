@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import DjangoClient from "utils/DjangoClient";
 import { Link, useNavigate } from "react-router-dom";
 import NumberRowModel from "components/number-rows/NumberRowModel";
 import DataComponentUtil from 'utils/DataComponentUtil';

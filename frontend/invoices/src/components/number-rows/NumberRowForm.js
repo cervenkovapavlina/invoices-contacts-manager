@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
-import DjangoClient from "utils/DjangoClient";
-import { Link, useNavigate } from "react-router-dom";
-import NumberRowModel from "components/number-rows/NumberRowModel";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DataComponentUtil from 'utils/DataComponentUtil';
 
 const NumberRowForm = () => {

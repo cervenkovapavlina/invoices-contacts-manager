@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import DjangoClient from 'utils/DjangoClient';
 import DataComponentUtil from 'utils/DataComponentUtil';
 import NumberRowModel from "components/number-rows/NumberRowModel";
 
@@ -28,7 +27,7 @@ const NumberRowDetail = () => {
             loadedRef.current = true;
             DataComponentUtil.loadData('number_rows/' + id, mapDataToModel, setLoading, setErrorMessage);
         }
-    }, [])
+    }, [id])
 
     const generateNumberRowDetail = () => {
         return (
