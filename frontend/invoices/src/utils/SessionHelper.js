@@ -1,43 +1,55 @@
+import DjangoClient from 'utils/DjangoClient';
+
 class SessionHelper {
-    static SESSION_FLAG = "";
+    static SESSION_ID = "session_id";
     static AUTHENTICATION_TOKEN = "authenticationToken";
     static CSRF_TOKEN = "csrfToken";
 
-    static generateRandomString(length) {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let result = '';
-        const charactersLength = characters.length;
-        for (let i = 0; i < length; i++) {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
-        }
-        return result;
-    }
-
-    static open(authenticationToken, csrfToken){
+    static open(sessionId, authenticationToken, csrfToken){
         SessionHelper.close();
-        SessionHelper.SESSION_FLAG = SessionHelper.generateRandomString(16);
-        sessionStorage.setItem(SessionHelper.SESSION_FLAG, true);
+        localStorage.setItem(SessionHelper.SESSION_ID, sessionId);
         sessionStorage.setItem(SessionHelper.AUTHENTICATION_TOKEN, authenticationToken);
         sessionStorage.setItem(SessionHelper.CSRF_TOKEN, csrfToken);
     }
 
     static close(){
-        sessionStorage.setItem(SessionHelper.SESSION_FLAG, false);
+        localStorage.setItem(SessionHelper.SESSION_ID, null);
+        localStorage.clear();
         sessionStorage.clear();
     }
 
     static isOpen(){
-        let flag = sessionStorage.getItem(SessionHelper.SESSION_FLAG);
-        console.log(SessionHelper.SESSION_FLAG)
-        return flag && flag.toLowerCase() === "true"
+        let flag = localStorage.getItem(SessionHelper.SESSION_ID);
+        return flag !== null
+    }
+
+    static getSessionId(){
+        return localStorage.getItem(SessionHelper.SESSION_ID)
     }
 
     static getAuthenticationToken(){
-        return sessionStorage.getItem(SessionHelper.AUTHENTICATION_TOKEN)
+        return SessionHelper.getToken(SessionHelper.AUTHENTICATION_TOKEN)
     }
 
     static getCsrfToken(){
-        return sessionStorage.getItem(SessionHelper.CSRF_TOKEN)
+        return SessionHelper.getToken(SessionHelper.CSRF_TOKEN)
+    }
+
+    static getToken(tokenTypeKey){
+        let token = sessionStorage.getItem(tokenTypeKey);
+        if(!token){
+            SessionHelper.loadSession();
+            token = sessionStorage.getItem(tokenTypeKey);
+        }
+        return token
+    }
+
+    static loadSession(){
+        let sessionId = SessionHelper.getSessionId();
+        let client = new DjangoClient();
+        let response = client.blockedGet("session/" + sessionId);
+        sessionStorage.setItem(SessionHelper.AUTHENTICATION_TOKEN, response.authentication_token);
+        sessionStorage.setItem(SessionHelper.CSRF_TOKEN, response.csrf_token);
     }
 
 }

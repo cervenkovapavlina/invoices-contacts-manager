@@ -76,7 +76,19 @@ class DjangoClient {
             }
         })
         .catch(error => errorCallback(error));
-    };
+    }
+
+    blockedGet = async (endpoint) => {
+        let url = DjangoClient.BASE_URL + '/' + endpoint;
+        this.debug(url);
+        const response = await fetch(url);
+        if(!response.ok){
+            console.error(`Request to ${endpoint} failed.` );
+        } else {
+            let json = await response.json();
+            return json
+        }
+    }
 }
 
 export default DjangoClient;
