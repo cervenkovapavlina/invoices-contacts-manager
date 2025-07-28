@@ -14,7 +14,7 @@ const Login = ({ onLogin }) => {
     e.preventDefault();
     let okCallback = (data) => {
         onLogin();
-        SessionHelper.open(data.authentication_token, data.csrf_token);
+        SessionHelper.open(data.session_id, data.authentication_token, data.csrf_token);
         navigate('/home');
     };
     let errorCallback = (error) => {
