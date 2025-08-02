@@ -2,3 +2,6 @@
 venv
 project/db.sqlite3
 project/invoices/migrations/*.py
+project/tokens/migrations/*.py
+project/contacts/migrations/*.py
+project/logs/*.log

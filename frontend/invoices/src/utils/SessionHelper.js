@@ -1,7 +1,7 @@
 import DjangoClient from 'utils/DjangoClient';
 
 class SessionHelper {
-    static SESSION_ID = "session_id";
+    static SESSION_ID = "sessionId";
     static AUTHENTICATION_TOKEN = "authenticationToken";
     static CSRF_TOKEN = "csrfToken";
 
