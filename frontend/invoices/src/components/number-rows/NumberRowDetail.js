@@ -49,9 +49,9 @@ const NumberRowDetail = () => {
                             value={numberRow.prefix}
                             disabled
                         />
-                        <div className="mb-3 mt-3">
-                          <label className="form-label">Typ faktur:</label>
-                          <div>
+                        <div className="row my-3">
+                          <label className="col-sm-4 col-form-label text-sm-end">Typ faktur</label>
+                          <div className="col-sm-8 my-2">
                             <div className="form-check form-check-inline">
                               <input
                                 className="form-check-input"

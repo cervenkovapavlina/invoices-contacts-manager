@@ -44,9 +44,14 @@ const NumberRowList = () => {
     const generateNumberRowList = () => {
         return (
             <div className="number-row-list">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h1>Číselné řady faktur</h1>
-                    <button className="btn btn-primary" onClick={handleClick}>Přidat číselnou řadu</button>
+                <div className="row">
+                    <div className="col-lg-3"></div>
+                    <div className="col-lg-6">
+                        <h1>Číselné řady faktur</h1>
+                    </div>
+                    <div className="col-lg-3 my-2">
+                        <button className="btn btn-primary" onClick={handleClick}>Přidat číselnou řadu</button>
+                    </div>
                 </div>
                 {!numberRows || numberRows.length === 0 ? (
                     <p>No number rows found.</p>
