@@ -2,14 +2,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 from invoices.utils.InputValidator import InputValidator
-from tokens.utils.generators import generate_token, generate_session
+from user_sessions.utils.generators import generate_token, generate_session
 from invoices.utils.Logger import Logger
 from django.middleware.csrf import get_token
-from tokens.models import Session
+from user_sessions.models import Session
 
 
 @csrf_exempt
-def token_create(request):
+def session_create(request):
     if request.method == "POST":
         try:
             json_data = json.loads(request.body)
@@ -33,7 +33,7 @@ def token_create(request):
 
 
 @csrf_exempt
-def get_session(request, session_id):
+def session_get(request, session_id):
     session = Session.objects.filter(session_id=session_id)
     return JsonResponse({
         "session_id": session.session_id,

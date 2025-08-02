@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
 from invoices.utils.InputValidator import InputValidator
 from functools import wraps
-from tokens.models import Token
+from user_sessions.models import Token
 from django.db.utils import IntegrityError
 from invoices.utils.Logger import Logger
 

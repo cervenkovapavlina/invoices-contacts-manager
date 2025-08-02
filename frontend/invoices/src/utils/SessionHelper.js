@@ -47,7 +47,7 @@ class SessionHelper {
     static loadSession(){
         let sessionId = SessionHelper.getSessionId();
         let client = new DjangoClient();
-        let response = client.blockedGet("session/" + sessionId);
+        let response = client.blockedGet("sessions/" + sessionId);
         sessionStorage.setItem(SessionHelper.AUTHENTICATION_TOKEN, response.authentication_token);
         sessionStorage.setItem(SessionHelper.CSRF_TOKEN, response.csrf_token);
     }

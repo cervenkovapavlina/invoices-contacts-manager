@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
-from tokens.utils.generators import generate_token
+from user_sessions.utils.generators import generate_token
 
 class SecuredEndpointTest(TestCase):
 

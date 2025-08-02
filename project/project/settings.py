@@ -89,7 +89,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'invoices',
-    'tokens'
+    'user_sessions'
 ]
 
 MIDDLEWARE = [

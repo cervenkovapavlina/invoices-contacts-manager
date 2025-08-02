@@ -1,7 +1,7 @@
 import random
 import string
 from django.contrib.auth import authenticate
-from tokens.models import Token, Session
+from user_sessions.models import Token, Session
 from django.core.exceptions import PermissionDenied
 
 
