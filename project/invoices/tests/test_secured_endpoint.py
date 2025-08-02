@@ -11,7 +11,7 @@ class SecuredEndpointTest(TestCase):
         password = "heslo"
         user = User.objects.create_user(username="uzivatel", password=password)
         token = generate_token(user.username, password)
-        response = self.client.get("/", HTTP_TOKEN=token.token)
+        response = self.client.get("/", HTTP_AUTHENTICATION_TOKEN=token.token)
         self.assertEqual(response.status_code, 200, "response.status_code = 200")
         self.assertEqual(response.json(), {}, "response.json() = {}")
 
