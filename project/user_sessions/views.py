@@ -34,9 +34,15 @@ def session_create(request):
 
 @csrf_exempt
 def session_get(request, session_id):
-    session = Session.objects.filter(session_id=session_id)
-    return JsonResponse({
-        "session_id": session.session_id,
-        "authentication_token": session.authentication_token,
-        "csrf_token": session.csrf_token,
-    })
+    try:
+        session = Session.objects.get(session_id=session_id)
+        return JsonResponse({
+            "session_id": session.session_id,
+            "authentication_token": session.authentication_token.token,
+            "csrf_token": session.csrf_token,
+        })
+    except Exception as e:
+        error_message = f"Incorrect session_id."
+        Logger.error(__name__, error_message)
+        return JsonResponse({"message": error_message}, status=400)
+

@@ -53,17 +53,18 @@ class DjangoClient {
         .catch(error => errorCallback(error));
     }
 
-    post = (endpoint, okCallback, errorCallback, body) => {
+    post = (endpoint, okCallback, errorCallback, body, addAuthenticationHeaders=true) => {
         let url = DjangoClient.BASE_URL + '/' + endpoint;
-        this.debug(url)
+        this.debug(url);
+        let headers = {'Content-Type': 'application/json'};
+        if (addAuthenticationHeaders){
+            headers['X-CSRFToken'] = SessionHelper.getCsrfToken();
+            headers['Authentication-Token'] = SessionHelper.getAuthenticationToken();
+        }
         fetch(url, {
           method: 'POST',
           credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': SessionHelper.getCsrfToken(),
-            'Authentication-Token': SessionHelper.getAuthenticationToken(),
-          },
+          headers: headers,
           body: JSON.stringify(body),
         })
         .then(response => response.json())

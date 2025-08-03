@@ -39,7 +39,7 @@ class SessionHelper {
         let token = sessionStorage.getItem(tokenTypeKey);
         if(!token){
             SessionHelper.loadSession();
-            token = sessionStorage.getItem(tokenTypeKey);
+            alert("ABC");
         }
         return token
     }
@@ -47,9 +47,11 @@ class SessionHelper {
     static loadSession(){
         let sessionId = SessionHelper.getSessionId();
         let client = new DjangoClient();
-        let response = client.blockedGet("sessions/" + sessionId);
-        sessionStorage.setItem(SessionHelper.AUTHENTICATION_TOKEN, response.authentication_token);
-        sessionStorage.setItem(SessionHelper.CSRF_TOKEN, response.csrf_token);
+        (async () => {
+            let response = await client.blockedGet("sessions/" + sessionId)
+            sessionStorage.setItem(SessionHelper.AUTHENTICATION_TOKEN, response.authentication_token);
+            sessionStorage.setItem(SessionHelper.CSRF_TOKEN, response.csrf_token);
+        })();
     }
 
 }

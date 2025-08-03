@@ -23,7 +23,7 @@ const Login = ({ onLogin }) => {
     };
     let body = {"user_name": username, "password": password};
     let client = new DjangoClient();
-    client.post("sessions/create", okCallback, errorCallback, body);
+    client.post("sessions/create", okCallback, errorCallback, body, false);
   };
 
   return (
