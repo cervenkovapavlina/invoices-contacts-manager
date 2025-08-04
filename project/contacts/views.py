@@ -16,13 +16,13 @@ from invoices.utils.Logger import Logger
 
 
 @csrf_exempt
-#@secured_endpoint
+# @secured_endpoint
 def contact_list(request):
     return JsonResponse(serialize('python', Contact.objects.all()), safe=False)
 
 
 @csrf_exempt
-#@secured_endpoint
+# @secured_endpoint
 def contact_detail(request, id):
     try:
         contact = Contact.objects.get(id=id)
@@ -33,8 +33,9 @@ def contact_detail(request, id):
         Logger.error(__name__, error_message)
         return JsonResponse({"message": error_message}, status=404)
 
+
 @csrf_exempt
-#@secured_endpoint
+# @secured_endpoint
 def contact_create(request):
     if request.method == "POST":
         try:
@@ -67,15 +68,34 @@ def contact_create(request):
                 phone_number=filled_data["phone_number"],
                 email_address=filled_data["email_address"],
             )
-        except:
-            pass
+            contact.save()
+            return JsonResponse({"id": contact.id})
+        except ValidationError as e:
+            error_message = f"Invalid input. Required data not provided. {e.messages}"
+            Logger.error(__name__, error_message)
+            return JsonResponse({"message": error_message}, status=400)
+        except IntegrityError as e:
+            error_message = "Save failed."
+            Logger.error(__name__, f"{error_message} {e}")
+            return JsonResponse({"message": error_message}, status=400)
     error_message = "Method not allowed."
     Logger.error(__name__, error_message)
     return JsonResponse({"message": error_message}, status=405)
 
 
 @csrf_exempt
-#@secured_endpoint
-def contact_update(request):
-    pass
-
+# @secured_endpoint
+def contact_update(request, id):
+    if request.method == "PATCH":
+        try:
+            contact = Contact.objects.get(id=id)
+            json_data = json.loads(request.body)
+            for field, value in json_data.items():
+                setattr(contact, field, value)
+            contact.save()
+            return JsonResponse({"id": contact.id})
+        except Contact.DoesNotExist:
+            return JsonResponse({"message": "Contact not found."}, status=404)
+    error_message = "Method not allowed."
+    Logger.error(__name__, error_message)
+    return JsonResponse({"message": error_message}, status=405)
