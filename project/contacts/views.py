@@ -1,6 +1,4 @@
 import json
-
-from django.shortcuts import render
 from invoices.views import secured_endpoint
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -9,10 +7,9 @@ from contacts.models import Contact
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
 from invoices.utils.InputValidator import InputValidator
-from functools import wraps
-from tokens.models import Token
 from django.db.utils import IntegrityError
 from invoices.utils.Logger import Logger
+from django.forms.models import model_to_dict
 
 
 @csrf_exempt
@@ -92,10 +89,21 @@ def contact_update(request, id):
             json_data = json.loads(request.body)
             for field, value in json_data.items():
                 setattr(contact, field, value)
+            data = model_to_dict(contact)
+            validator = InputValidator()
+            validator.validate_input(data, ["name"], {})
             contact.save()
             return JsonResponse({"id": contact.id})
         except Contact.DoesNotExist:
             return JsonResponse({"message": "Contact not found."}, status=404)
+        except ValidationError as e:
+            error_message = f"Invalid input. Required data not provided. {e.messages}"
+            Logger.error(__name__, error_message)
+            return JsonResponse({"message": error_message}, status=400)
+        except IntegrityError as e:
+            error_message = "Save failed."
+            Logger.error(__name__, f"{error_message} {e}")
+            return JsonResponse({"message": error_message}, status=400)
     error_message = "Method not allowed."
     Logger.error(__name__, error_message)
     return JsonResponse({"message": error_message}, status=405)
