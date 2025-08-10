@@ -12,14 +12,12 @@ from invoices.utils.Logger import Logger
 from django.forms.models import model_to_dict
 
 
-@csrf_exempt
-# @secured_endpoint
+@secured_endpoint
 def contact_list(request):
     return JsonResponse(serialize('python', Contact.objects.all()), safe=False)
 
 
-@csrf_exempt
-# @secured_endpoint
+@secured_endpoint
 def contact_detail(request, id):
     try:
         contact = Contact.objects.get(id=id)
@@ -31,8 +29,7 @@ def contact_detail(request, id):
         return JsonResponse({"message": error_message}, status=404)
 
 
-@csrf_exempt
-# @secured_endpoint
+@secured_endpoint
 def contact_create(request):
     if request.method == "POST":
         try:
@@ -80,8 +77,7 @@ def contact_create(request):
     return JsonResponse({"message": error_message}, status=405)
 
 
-@csrf_exempt
-# @secured_endpoint
+@secured_endpoint
 def contact_update(request, id):
     if request.method == "PATCH":
         try:
