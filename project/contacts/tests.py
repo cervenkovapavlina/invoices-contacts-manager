@@ -1,6 +1,7 @@
 from django.test import TestCase
 from contacts.models import Contact
 from django.core.exceptions import ValidationError
+from django.db.utils import IntegrityError
 
 
 class ContactTest(TestCase):
@@ -40,22 +41,57 @@ class ContactTest(TestCase):
     def test_missing_name_raises_error(self):
         invalid_name_exception = False
         try:
-            contact = Contact(company_id="12345678")
+            contact = Contact()
             contact.save()
         except ValidationError as e:
             error_message = "['Ensure this value has at least 3 characters (it has 0).', 'name: ']"
-            self.assertEqual(error_message, str(e.messages), f"{error_message} = {e.messages}")
+            self.assertEqual(error_message, str(e.messages), f"{error_message} = {str(e.messages)}")
             invalid_name_exception = True
         self.assertTrue(invalid_name_exception, "invalid_name_exception = True")
 
     def test_empty_string_name_raises_error(self):
-        pass
-
-    def test_none_name_raises_error(self):
-        pass
+        invalid_name_exception = False
+        try:
+            contact = Contact(name="")
+            contact.save()
+        except ValidationError as e:
+            error_message = "['Ensure this value has at least 3 characters (it has 0).', 'name: ']"
+            self.assertEqual(error_message, str(e.messages), f"{error_message} = {str(e.messages)}")
+            invalid_name_exception = True
+        self.assertTrue(invalid_name_exception, "invalid_name_exception = True")
 
     def test_short_name_raises_error(self):
-        pass
+        name = "AB"
+        invalid_name_exception = False
+        try:
+            contact = Contact(name=name)
+            contact.save()
+        except ValidationError as e:
+            error_message = f"['Ensure this value has at least 3 characters (it has {len(name)}).', 'name: {name}']"
+            self.assertEqual(error_message, str(e.messages), f"{error_message} = {str(e.messages)}")
+            invalid_name_exception = True
+        self.assertTrue(invalid_name_exception, "invalid_name_exception = True")
+
+    def test_min_length_name_is_valid(self):
+        name = "ABC"
+        contact = Contact(name=name)
+        contact.save()
+        self.assertEqual(len(name), len(contact.name), f"{len(name)} = {len(contact.name)}")
 
     def test_duplicate_name_raises_error(self):
-        pass
+        name = "ABC"
+        duplicate_name_error = False
+        try:
+            contact = Contact(name=name)
+            contact.save()
+            duplicate_contact = Contact(name=name)
+            duplicate_contact.save()
+        except IntegrityError as e:
+            error_message = "UNIQUE constraint failed: contacts_contact.name"
+            self.assertEqual(error_message, str(e), f"{error_message} = {str(e)}")
+            duplicate_name_error = True
+        self.assertTrue(duplicate_name_error, "duplicate_name_error = True")
+
+
+
+
