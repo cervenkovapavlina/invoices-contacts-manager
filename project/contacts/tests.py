@@ -18,8 +18,8 @@ class ContactTest(TestCase):
             name="Firma ABC",
             active=False,
             external=False,
-            company_id="12345678",
-            tax_id="CZ12345678",
+            registration_number="12345678",
+            vat_number="CZ12345678",
             bank_account="12345678/1000",
             address="Veselá 123/45b, Brno, 61100",
             contact_person="Jana Nováková",
@@ -30,8 +30,8 @@ class ContactTest(TestCase):
         contact.save()
         self.assertFalse(contact.active, "contact.active = False")
         self.assertFalse(contact.external, "contact.external = False")
-        self.assertEqual(contact.company_id, "12345678", "contact.company_id = 12345678")
-        self.assertEqual(contact.tax_id, "CZ12345678", "contact.tax_id = CZ12345678")
+        self.assertEqual(contact.registration_number, "12345678", "contact.registration_number = 12345678")
+        self.assertEqual(contact.vat_number, "CZ12345678", "contact.vat_number = CZ12345678")
         self.assertEqual(contact.bank_account, "12345678/1000", "contact.bank_account = 12345678/1000")
         self.assertEqual(contact.address, "Veselá 123/45b, Brno, 61100", "contact.address = Veselá 123/45b, Brno, 61100")
         self.assertEqual(contact.contact_person, "Jana Nováková", "contact.contact_person = Jana Nováková")
