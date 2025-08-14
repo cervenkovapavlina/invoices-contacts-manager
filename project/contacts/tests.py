@@ -91,7 +91,3 @@ class ContactTest(TestCase):
             self.assertEqual(error_message, str(e), f"{error_message} = {str(e)}")
             duplicate_name_error = True
         self.assertTrue(duplicate_name_error, "duplicate_name_error = True")
-
-
-
-

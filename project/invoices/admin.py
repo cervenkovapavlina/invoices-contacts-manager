@@ -3,5 +3,3 @@ from .models import NumberRowPrefix, NumberRowValue
 
 admin.site.register(NumberRowPrefix)
 admin.site.register(NumberRowValue)
-
-

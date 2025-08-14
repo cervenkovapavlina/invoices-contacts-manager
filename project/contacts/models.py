@@ -22,7 +22,3 @@ class Contact(Entity):
         except ValidationError as e:
             raise ValidationError({self.name: e.messages + [f"name: {self.name}"]})
         super(Contact, self).save(*args, **kwargs)
-
-
-
-

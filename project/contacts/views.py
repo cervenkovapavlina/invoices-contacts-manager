@@ -29,77 +29,102 @@ def contact_detail(request, id):
         return JsonResponse({"message": error_message}, status=404)
 
 
+def get_contact_default_fields():
+    return {
+        "active": True,
+        "external": True,
+        "registration_number": "",
+        "vat_number": "",
+        "bank_account": "",
+        "address": "",
+        "contact_person": "",
+        "phone_number": "",
+        "email_address": ""
+    }
+
+
+def save_contact(filled_data):
+    contact = Contact(
+        name=filled_data["name"],
+        active=filled_data["active"],
+        external=filled_data["external"],
+        registration_number=filled_data["registration_number"],
+        vat_number=filled_data["vat_number"],
+        bank_account=filled_data["bank_account"],
+        address=filled_data["address"],
+        contact_person=filled_data["contact_person"],
+        phone_number=filled_data["phone_number"],
+        email_address=filled_data["email_address"],
+    )
+    contact.save()
+    return contact
+
+
+def validate_new_contact(body):
+    json_data = json.loads(body)
+    validator = InputValidator()
+    filled_data = validator.validate_input(
+        json_data,
+        ["name"],
+        get_contact_default_fields()
+    )
+    return filled_data
+
+
 @secured_endpoint
 def contact_create(request):
-    if request.method == "POST":
-        try:
-            json_data = json.loads(request.body)
-            validator = InputValidator()
-            filled_data = validator.validate_input(
-                json_data,
-                ["name"],
-                {
-                    "active": True,
-                    "external": True,
-                    "registration_number": "",
-                    "vat_number": "",
-                    "bank_account": "",
-                    "address": "",
-                    "contact_person": "",
-                    "phone_number": "",
-                    "email_address": ""
-                }
-            )
-            contact = Contact(
-                name=filled_data["name"],
-                active=filled_data["active"],
-                external=filled_data["external"],
-                registration_number=filled_data["registration_number"],
-                vat_number=filled_data["vat_number"],
-                bank_account=filled_data["bank_account"],
-                address=filled_data["address"],
-                contact_person=filled_data["contact_person"],
-                phone_number=filled_data["phone_number"],
-                email_address=filled_data["email_address"],
-            )
-            contact.save()
-            return JsonResponse({"id": contact.id})
-        except ValidationError as e:
-            error_message = f"Invalid input. Required data not provided. {e.messages}"
-            Logger.error(__name__, error_message)
-            return JsonResponse({"message": error_message}, status=400)
-        except IntegrityError as e:
-            error_message = "Save failed."
-            Logger.error(__name__, f"{error_message} {e}")
-            return JsonResponse({"message": error_message}, status=400)
-    error_message = "Method not allowed."
-    Logger.error(__name__, error_message)
-    return JsonResponse({"message": error_message}, status=405)
+    if request.method != "POST":
+        error_message = "Method not allowed."
+        Logger.error(__name__, error_message)
+        return JsonResponse({"message": error_message}, status=405)
+
+    try:
+        filled_data = validate_new_contact(request.body)
+        contact = save_contact(filled_data)
+        return JsonResponse({"id": contact.id})
+    except ValidationError as e:
+        error_message = f"Invalid input. Required data not provided. {e.messages}"
+        Logger.error(__name__, error_message)
+        return JsonResponse({"message": error_message}, status=400)
+    except IntegrityError as e:
+        error_message = "Save failed."
+        Logger.error(__name__, f"{error_message} {e}")
+        return JsonResponse({"message": error_message}, status=400)
+
+
+def update_contact(body, id):
+    contact = Contact.objects.get(id=id)
+    json_data = json.loads(body)
+    for field, value in json_data.items():
+        setattr(contact, field, value)
+    validate_existing_contact(contact)
+    contact.save()
+    return contact
+
+
+def validate_existing_contact(contact):
+    data = model_to_dict(contact)
+    validator = InputValidator()
+    validator.validate_input(data, ["name"], {})
 
 
 @secured_endpoint
 def contact_update(request, id):
-    if request.method == "PATCH":
-        try:
-            contact = Contact.objects.get(id=id)
-            json_data = json.loads(request.body)
-            for field, value in json_data.items():
-                setattr(contact, field, value)
-            data = model_to_dict(contact)
-            validator = InputValidator()
-            validator.validate_input(data, ["name"], {})
-            contact.save()
-            return JsonResponse({"id": contact.id})
-        except Contact.DoesNotExist:
-            return JsonResponse({"message": "Contact not found."}, status=404)
-        except ValidationError as e:
-            error_message = f"Invalid input. Required data not provided. {e.messages}"
-            Logger.error(__name__, error_message)
-            return JsonResponse({"message": error_message}, status=400)
-        except IntegrityError as e:
-            error_message = "Save failed."
-            Logger.error(__name__, f"{error_message} {e}")
-            return JsonResponse({"message": error_message}, status=400)
-    error_message = "Method not allowed."
-    Logger.error(__name__, error_message)
-    return JsonResponse({"message": error_message}, status=405)
+    if request.method != "PATCH":
+        error_message = "Method not allowed."
+        Logger.error(__name__, error_message)
+        return JsonResponse({"message": error_message}, status=405)
+
+    try:
+        contact = update_contact(request.body, id)
+        return JsonResponse({"id": contact.id})
+    except Contact.DoesNotExist:
+        return JsonResponse({"message": "Contact not found."}, status=404)
+    except ValidationError as e:
+        error_message = f"Invalid input. Required data not provided. {e.messages}"
+        Logger.error(__name__, error_message)
+        return JsonResponse({"message": error_message}, status=400)
+    except IntegrityError as e:
+        error_message = "Save failed."
+        Logger.error(__name__, f"{error_message} {e}")
+        return JsonResponse({"message": error_message}, status=400)
