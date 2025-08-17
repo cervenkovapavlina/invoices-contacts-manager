@@ -10,20 +10,19 @@ const Login = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    let okCallback = (data) => {
+    let body = {"user_name": username, "password": password};
+    let client = new DjangoClient();
+    const data = await client.post("sessions/create", body, false);
+    if(data.message){
+        alert("Neplatné přihlašovací údaje.")
+        console.error(data.message)
+    } else {
         onLogin();
         SessionHelper.open(data.session_id, data.authentication_token, data.csrf_token);
         navigate('/home');
-    };
-    let errorCallback = (error) => {
-        console.error(error);
-        alert('Invalid credentials');
-    };
-    let body = {"user_name": username, "password": password};
-    let client = new DjangoClient();
-    client.post("sessions/create", okCallback, errorCallback, body, false);
+    }
   };
 
   return (

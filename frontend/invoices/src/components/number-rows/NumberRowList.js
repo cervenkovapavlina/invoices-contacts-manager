@@ -35,10 +35,7 @@ const NumberRowList = () => {
     };
 
     useEffect(() => {
-        if (loadedRef.current === false){
-            loadedRef.current = true;
-            DataComponentUtil.loadData("number_rows", mapDataToModel, setLoading, setErrorMessage);
-        }
+        DataComponentUtil.loadData("number_rows", mapDataToModel, setLoading, setErrorMessage);
     }, [])
 
     const generateNumberRowList = () => {

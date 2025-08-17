@@ -30,64 +30,48 @@ class DjangoClient {
       return cookieValue;
     }
 
-    get = (endpoint, okCallback, errorCallback) => {
+    get = async (endpoint, addAuthenticationHeaders=true) => {
         let url = DjangoClient.BASE_URL + '/' + endpoint;
-        this.debug(url)
-        fetch(url, {
+        console.log(`GET ${url}`);
+        let headers = {
+            'Content-Type': 'application/json',
+        };
+        if (addAuthenticationHeaders) {
+            headers['Authentication-Token'] = await SessionHelper.getAuthenticationToken();
+        }
+        this.debug(`GET ${url}`)
+        const response = await fetch(url, {
           method: 'GET',
           credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authentication-Token': SessionHelper.getAuthenticationToken(),
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message) {
-                throw data.message
-            } else {
-                this.debug(data);
-                okCallback(data);
-            }
-        })
-        .catch(error => errorCallback(error));
+          headers: headers,
+        });
+        if (response.ok){
+            return response.json()
+        } else {
+            console.error(`GET ${url} failed. `);
+            throw new Error(response.message);
+        }
     }
 
-    post = (endpoint, okCallback, errorCallback, body, addAuthenticationHeaders=true) => {
+    post = async (endpoint, body, addAuthenticationHeaders=true) => {
         let url = DjangoClient.BASE_URL + '/' + endpoint;
         this.debug(url);
         let headers = {'Content-Type': 'application/json'};
         if (addAuthenticationHeaders){
-            headers['X-CSRFToken'] = SessionHelper.getCsrfToken();
-            headers['Authentication-Token'] = SessionHelper.getAuthenticationToken();
+            headers['X-CSRFToken'] = await SessionHelper.getCsrfToken();
+            headers['Authentication-Token'] = await SessionHelper.getAuthenticationToken();
         }
-        fetch(url, {
+        const response = await fetch(url, {
           method: 'POST',
           credentials: 'include',
           headers: headers,
           body: JSON.stringify(body),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message) {
-                throw data.message
-            } else {
-                this.debug(data);
-                okCallback(data);
-            }
-        })
-        .catch(error => errorCallback(error));
-    }
-
-    blockedGet = async (endpoint) => {
-        let url = DjangoClient.BASE_URL + '/' + endpoint;
-        this.debug(url);
-        const response = await fetch(url);
-        if(!response.ok){
-            console.error(`Request to ${endpoint} failed.` );
+        });
+        if (response.ok){
+            return response.json()
         } else {
-            let json = await response.json();
-            return json
+            console.error(`POST ${url} failed. `);
+            return response.json()
         }
     }
 }

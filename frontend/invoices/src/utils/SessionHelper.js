@@ -27,33 +27,34 @@ class SessionHelper {
         return localStorage.getItem(SessionHelper.SESSION_ID)
     }
 
-    static getAuthenticationToken(){
-        return SessionHelper.getToken(SessionHelper.AUTHENTICATION_TOKEN)
+    static async getAuthenticationToken(){
+        return await SessionHelper.getToken(SessionHelper.AUTHENTICATION_TOKEN)
     }
 
-    static getCsrfToken(){
-        return SessionHelper.getToken(SessionHelper.CSRF_TOKEN)
+    static async getCsrfToken(){
+        return await SessionHelper.getToken(SessionHelper.CSRF_TOKEN)
     }
 
-    static getToken(tokenTypeKey){
+    static async loadSession() {
+      try {
+        let sessionId = SessionHelper.getSessionId();
+        const client = new DjangoClient();
+        const response = await client.get("sessions/" + encodeURI(sessionId), false);
+        sessionStorage.setItem(SessionHelper.AUTHENTICATION_TOKEN, response.authentication_token);
+        sessionStorage.setItem(SessionHelper.CSRF_TOKEN, response.csrf_token);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    static async getToken(tokenTypeKey) {
         let token = sessionStorage.getItem(tokenTypeKey);
         if(!token){
-            SessionHelper.loadSession();
-            alert("ABC");
+            await SessionHelper.loadSession();
+            token = sessionStorage.getItem(tokenTypeKey);
         }
         return token
     }
-
-    static loadSession(){
-        let sessionId = SessionHelper.getSessionId();
-        let client = new DjangoClient();
-        (async () => {
-            let response = await client.blockedGet("sessions/" + sessionId)
-            sessionStorage.setItem(SessionHelper.AUTHENTICATION_TOKEN, response.authentication_token);
-            sessionStorage.setItem(SessionHelper.CSRF_TOKEN, response.csrf_token);
-        })();
-    }
-
 }
 
 export default SessionHelper;

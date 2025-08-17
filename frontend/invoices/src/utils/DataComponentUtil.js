@@ -3,26 +3,28 @@ import DjangoClient from "utils/DjangoClient";
 
 class DataComponentUtil{
 
-    static loadData(endpoint, setData, setLoading, setErrorMessage){
+    static async loadData(endpoint, setData, setLoading, setErrorMessage){
         let client = new DjangoClient();
-        client.get(endpoint, (data) => {
+        try {
+            const data = await client.get(endpoint);
             setData(data);
             setLoading(false);
-        }, (error) => {
+        } catch (error) {
             setLoading(false);
             setErrorMessage(error);
-        })
+        }
     }
 
-    static sendData(endpoint, body, navigate, redirectUrl, setLoading, setErrorMessage){
+    static async sendData(endpoint, body, navigate, redirectUrl, setLoading, setErrorMessage){
         let client = new DjangoClient();
-        client.post(endpoint, (data) => {
+        try {
+            const data = await client.post(endpoint, body);
             setLoading(false);
             navigate(`/${redirectUrl}/${data.id}`);
-        }, (error) => {
+        } catch (error) {
             setLoading(false);
             setErrorMessage(error);
-        }, body);
+        }
     }
 
     static output(loading, errorMessage, generateSpecificOutput){

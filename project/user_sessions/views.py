@@ -6,6 +6,7 @@ from user_sessions.utils.generators import generate_token, generate_session
 from invoices.utils.Logger import Logger
 from django.middleware.csrf import get_token
 from user_sessions.models import Session
+from urllib.parse import unquote
 
 
 @csrf_exempt
@@ -35,7 +36,7 @@ def session_create(request):
 @csrf_exempt
 def session_get(request, session_id):
     try:
-        session = Session.objects.get(session_id=session_id)
+        session = Session.objects.get(session_id=unquote(session_id))
         return JsonResponse({
             "session_id": session.session_id,
             "authentication_token": session.authentication_token.token,
