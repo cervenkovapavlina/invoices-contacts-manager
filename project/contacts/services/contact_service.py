@@ -62,4 +62,4 @@ class ContactService:
     def validate_existing_contact(contact):
         data = model_to_dict(contact)
         validator = InputValidator()
-        validator.validate_input(data, ["name"], {})
+        validator.validate_input(data, ["name"], ContactService.get_contact_default_fields())
