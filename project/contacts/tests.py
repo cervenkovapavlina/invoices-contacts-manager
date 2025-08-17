@@ -38,39 +38,39 @@ class ContactTest(TestCase):
         self.assertEqual(contact.phone_number, "+420777000111", "contact.phone_number = +420777000111")
         self.assertEqual(contact.email_address, "jana.novakova@abc.cz", "contact.email_address = jana.novakova@abc.cz")
 
-    def test_missing_name_raises_error(self):
+    def assert_name_failure(self, invalid_name, create_empty_contact=False):
         invalid_name_exception = False
+        if invalid_name is None:
+            length = 0
+        else:
+            length = len(invalid_name)
         try:
-            contact = Contact()
+            if create_empty_contact:
+                contact = Contact()
+            else:
+                contact = Contact(name=invalid_name)
             contact.save()
         except ValidationError as e:
-            error_message = "['Ensure this value has at least 3 characters (it has 0).', 'name: ']"
+            error_message = f"['Ensure this value has at least 3 characters (it has {length}).', 'name: {invalid_name}']"
             self.assertEqual(error_message, str(e.messages), f"{error_message} = {str(e.messages)}")
             invalid_name_exception = True
+        except IntegrityError as e:
+            error_message = "NOT NULL constraint failed: contacts_contact.name"
+            self.assertEqual(error_message, str(e), f"{error_message} = {str(e)}")
+            invalid_name_exception = True
         self.assertTrue(invalid_name_exception, "invalid_name_exception = True")
+
+    def test_missing_name_raises_error(self):
+        self.assert_name_failure(invalid_name="", create_empty_contact=True)
 
     def test_empty_string_name_raises_error(self):
-        invalid_name_exception = False
-        try:
-            contact = Contact(name="")
-            contact.save()
-        except ValidationError as e:
-            error_message = "['Ensure this value has at least 3 characters (it has 0).', 'name: ']"
-            self.assertEqual(error_message, str(e.messages), f"{error_message} = {str(e.messages)}")
-            invalid_name_exception = True
-        self.assertTrue(invalid_name_exception, "invalid_name_exception = True")
+        self.assert_name_failure(invalid_name="")
+
+    def test_none_name_raises_error(self):
+        self.assert_name_failure(invalid_name=None)
 
     def test_short_name_raises_error(self):
-        name = "AB"
-        invalid_name_exception = False
-        try:
-            contact = Contact(name=name)
-            contact.save()
-        except ValidationError as e:
-            error_message = f"['Ensure this value has at least 3 characters (it has {len(name)}).', 'name: {name}']"
-            self.assertEqual(error_message, str(e.messages), f"{error_message} = {str(e.messages)}")
-            invalid_name_exception = True
-        self.assertTrue(invalid_name_exception, "invalid_name_exception = True")
+        self.assert_name_failure(invalid_name="AB")
 
     def test_min_length_name_is_valid(self):
         name = "ABC"

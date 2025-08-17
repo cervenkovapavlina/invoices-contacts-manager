@@ -18,7 +18,8 @@ class Contact(Entity):
 
     def save(self, *args, **kwargs):
         try:
-            MinLengthValidator(3)(self.name)
+            if self.name is not None:
+                MinLengthValidator(3)(self.name)
         except ValidationError as e:
             raise ValidationError({self.name: e.messages + [f"name: {self.name}"]})
         super(Contact, self).save(*args, **kwargs)

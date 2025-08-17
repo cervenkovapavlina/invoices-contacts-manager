@@ -6,7 +6,7 @@ from contacts.models import Contact
 from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from invoices.utils.Logger import Logger
-from contacts.services.contact_service import save_contact, validate_new_contact, update_contact
+from contacts.services.contact_service import ContactService
 
 
 @secured_endpoint
@@ -34,8 +34,8 @@ def contact_create(request):
         return JsonResponse({"message": error_message}, status=405)
 
     try:
-        filled_data = validate_new_contact(request.body)
-        contact = save_contact(filled_data)
+        filled_data = ContactService.validate_new_contact(request.body)
+        contact = ContactService.save_contact(filled_data)
         return JsonResponse({"id": contact.id})
     except ValidationError as e:
         error_message = f"Invalid input. Required data not provided. {e.messages}"
@@ -55,7 +55,7 @@ def contact_update(request, id):
         return JsonResponse({"message": error_message}, status=405)
 
     try:
-        contact = update_contact(request.body, id)
+        contact = ContactService.update_contact(request.body, id)
         return JsonResponse({"id": contact.id})
     except Contact.DoesNotExist:
         return JsonResponse({"message": "Contact not found."}, status=404)
