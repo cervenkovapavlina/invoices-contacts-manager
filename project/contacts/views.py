@@ -1,15 +1,12 @@
-import json
 from invoices.views import secured_endpoint
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers import serialize
 from contacts.models import Contact
-from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
-from invoices.utils.InputValidator import InputValidator
 from django.db.utils import IntegrityError
 from invoices.utils.Logger import Logger
-from django.forms.models import model_to_dict
+from contacts.services.contact_service import save_contact, validate_new_contact, update_contact
 
 
 @secured_endpoint
@@ -27,48 +24,6 @@ def contact_detail(request, id):
         error_message = "Not found."
         Logger.error(__name__, error_message)
         return JsonResponse({"message": error_message}, status=404)
-
-
-def get_contact_default_fields():
-    return {
-        "active": True,
-        "external": True,
-        "registration_number": "",
-        "vat_number": "",
-        "bank_account": "",
-        "address": "",
-        "contact_person": "",
-        "phone_number": "",
-        "email_address": ""
-    }
-
-
-def save_contact(filled_data):
-    contact = Contact(
-        name=filled_data["name"],
-        active=filled_data["active"],
-        external=filled_data["external"],
-        registration_number=filled_data["registration_number"],
-        vat_number=filled_data["vat_number"],
-        bank_account=filled_data["bank_account"],
-        address=filled_data["address"],
-        contact_person=filled_data["contact_person"],
-        phone_number=filled_data["phone_number"],
-        email_address=filled_data["email_address"],
-    )
-    contact.save()
-    return contact
-
-
-def validate_new_contact(body):
-    json_data = json.loads(body)
-    validator = InputValidator()
-    filled_data = validator.validate_input(
-        json_data,
-        ["name"],
-        get_contact_default_fields()
-    )
-    return filled_data
 
 
 @secured_endpoint
@@ -90,22 +45,6 @@ def contact_create(request):
         error_message = "Save failed."
         Logger.error(__name__, f"{error_message} {e}")
         return JsonResponse({"message": error_message}, status=400)
-
-
-def update_contact(body, id):
-    contact = Contact.objects.get(id=id)
-    json_data = json.loads(body)
-    for field, value in json_data.items():
-        setattr(contact, field, value)
-    validate_existing_contact(contact)
-    contact.save()
-    return contact
-
-
-def validate_existing_contact(contact):
-    data = model_to_dict(contact)
-    validator = InputValidator()
-    validator.validate_input(data, ["name"], {})
 
 
 @secured_endpoint
