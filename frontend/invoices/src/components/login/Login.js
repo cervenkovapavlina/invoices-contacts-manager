@@ -15,7 +15,7 @@ const Login = ({ onLogin }) => {
     let body = {"user_name": username, "password": password};
     let client = new DjangoClient();
     const data = await client.post("sessions/create", body, false);
-    if(data.message){
+    if (data.message) {
         alert("Neplatné přihlašovací údaje.")
         console.error(data.message)
     } else {

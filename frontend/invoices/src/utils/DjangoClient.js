@@ -33,6 +33,7 @@ class DjangoClient {
     get = async (endpoint, addAuthenticationHeaders=true) => {
         let url = DjangoClient.BASE_URL + '/' + endpoint;
         console.log(`GET ${url}`);
+        console.log("BBB")
         let headers = {
             'Content-Type': 'application/json',
         };
@@ -45,12 +46,10 @@ class DjangoClient {
           credentials: 'include',
           headers: headers,
         });
-        if (response.ok){
-            return response.json()
-        } else {
-            console.error(`GET ${url} failed. `);
-            throw new Error(response.message);
+        if (!response.ok) {
+            console.error(`GET ${url} failed.`);
         }
+        return response.json()
     }
 
     post = async (endpoint, body, addAuthenticationHeaders=true) => {
@@ -67,12 +66,10 @@ class DjangoClient {
           headers: headers,
           body: JSON.stringify(body),
         });
-        if (response.ok){
-            return response.json()
-        } else {
-            console.error(`POST ${url} failed. `);
-            return response.json()
+        if (!response.ok) {
+            console.error(`POST ${url} failed.`);
         }
+        return response.json()
     }
 }
 
