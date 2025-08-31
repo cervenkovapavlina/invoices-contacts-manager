@@ -13,6 +13,8 @@ from functools import wraps
 from user_sessions.models import Token
 from django.db.utils import IntegrityError
 from invoices.utils.Logger import Logger
+from django.core.paginator import Paginator
+from django.shortcuts import render
 
 # Create your views here.
 
@@ -77,3 +79,11 @@ def number_row_prefix_create(request):
     return JsonResponse({"message": error_message}, status=405)
 
 
+def my_view(request):
+    object_list = NumberRowPrefix.objects.all()  # your queryset
+    paginator = Paginator(object_list, 2)  # Show 10 objects per page
+
+    page_number = request.GET.get('page')  # e.g., ?page=2
+    page_obj = paginator.get_page(page_number)
+
+    return JsonResponse(serialize('python', page_obj), safe=False)
