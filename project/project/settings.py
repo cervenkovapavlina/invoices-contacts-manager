@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'invoices',
     'user_sessions'
+    'contacts'
 ]
 
 MIDDLEWARE = [

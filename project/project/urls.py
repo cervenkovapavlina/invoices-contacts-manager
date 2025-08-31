@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 import invoices.views as invoices_views
 import user_sessions.views as sessions_views
+import contacts.views as contacts_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -26,6 +27,11 @@ urlpatterns = [
     # path("invoices/", invoices_views.list, name="list"),
     # path("invoices/create", invoices_views.create, name="create"),
     # path("invoices/<id>", invoices_views.detail, name="detail"),
+
+    path("contacts/", contacts_views.contact_list, name="contact_list"),
+    path("contacts/create", contacts_views.contact_create, name="contact_create"),
+    path("contacts/update/<id>", contacts_views.contact_update, name="contact_update"),
+    path("contacts/<id>", contacts_views.contact_detail, name="contact_detail"),
 
     path("number_rows/", invoices_views.number_row_prefix_list, name="number_row_prefix_list"),
     path("number_rows/create", invoices_views.number_row_prefix_create, name="number_row_prefix_create"),
