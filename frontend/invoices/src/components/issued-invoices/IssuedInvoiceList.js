@@ -9,16 +9,15 @@ const IssuedInvoiceList = () => {
     const [selectedInvoice, setSelectedInvoice] = useState(null)
 
 
-    const loadData = () => {
+    const loadData = async() => {
         let client = new DjangoClient();
-        client.get('number_rows', (data)=>{
-            setInvoices(data);
-            setLoading(false)
-        }, (error)=>{setErrorMessage(error)})
+        const data = await client.get('number_rows');
+        setInvoices(data);
+        setLoading(false)
     }
 
-    useEffect(()=>{
-        loadData()
+    useEffect(async ()=>{
+        await loadData()
     }, [])
 
     if (loading) {

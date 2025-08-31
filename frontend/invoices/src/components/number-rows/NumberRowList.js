@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NumberRowModel from "components/number-rows/NumberRowModel";
 import DataComponentUtil from 'utils/DataComponentUtil';
@@ -8,7 +8,6 @@ const NumberRowList = () => {
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
     const navigate = useNavigate();
-    const loadedRef = useRef(false);
 
     const mapDataToModel = (data) => {
         let newNumberRowList = [];
@@ -35,18 +34,20 @@ const NumberRowList = () => {
     };
 
     useEffect(() => {
-        if (loadedRef.current === false){
-            loadedRef.current = true;
-            DataComponentUtil.loadData("number_rows", mapDataToModel, setLoading, setErrorMessage);
-        }
+        DataComponentUtil.loadData("number_rows", mapDataToModel, setLoading, setErrorMessage);
     }, [])
 
     const generateNumberRowList = () => {
         return (
             <div className="number-row-list">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                    <h1>Číselné řady faktur</h1>
-                    <button className="btn btn-primary" onClick={handleClick}>Přidat číselnou řadu</button>
+                <div className="row">
+                    <div className="col-lg-3"></div>
+                    <div className="col-lg-6">
+                        <h1>Číselné řady faktur</h1>
+                    </div>
+                    <div className="col-lg-3 my-2">
+                        <button className="btn btn-primary" onClick={handleClick}>Přidat číselnou řadu</button>
+                    </div>
                 </div>
                 {!numberRows || numberRows.length === 0 ? (
                     <p>No number rows found.</p>

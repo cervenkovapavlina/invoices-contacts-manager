@@ -8,19 +8,15 @@ const IssuedInvoiceDetail = () => {
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
 
-    const loadData = () => {
+    const loadData = async () => {
         let client = new DjangoClient();
-        client.get('number_rows/' + id, (data)=>{
-            setInvoice(data);
-            setLoading(false)
-        }, (error)=>{
-            setLoading(false)
-            setErrorMessage(error)
-        })
+        const data = await client.get('number_rows/' + id);
+        setInvoice(data);
+        setLoading(false)
     }
 
-    useEffect(()=>{
-        loadData();
+    useEffect(async ()=>{
+        await loadData();
     }, [])
 
     if (loading) {

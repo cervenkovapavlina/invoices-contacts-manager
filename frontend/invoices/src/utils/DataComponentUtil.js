@@ -1,31 +1,29 @@
 import DjangoClient from "utils/DjangoClient";
 
-
 class DataComponentUtil{
-
-    static loadData(endpoint, setData, setLoading, setErrorMessage){
+    static async loadData(endpoint, setData, setLoading, setErrorMessage) {
         let client = new DjangoClient();
-        client.get(endpoint, (data) => {
+        const data = await client.get(endpoint);
+        setLoading(false);
+        if (data.message) {
+            setErrorMessage(data.message);
+        } else {
             setData(data);
-            setLoading(false);
-        }, (error) => {
-            setLoading(false);
-            setErrorMessage(error);
-        })
+        }
     }
 
-    static sendData(endpoint, body, navigate, redirectUrl, setLoading, setErrorMessage){
+    static async sendData(endpoint, body, navigate, redirectUrl, setLoading, setErrorMessage) {
         let client = new DjangoClient();
-        client.post(endpoint, (data) => {
-            setLoading(false);
+        const data = await client.post(endpoint, body);
+        setLoading(false);
+        if (data.message) {
+            setErrorMessage(data.message);
+        } else {
             navigate(`/${redirectUrl}/${data.id}`);
-        }, (error) => {
-            setLoading(false);
-            setErrorMessage(error);
-        }, body);
+        }
     }
 
-    static output(loading, errorMessage, generateSpecificOutput){
+    static output(loading, errorMessage, generateSpecificOutput) {
         if (loading) {
             return <div>Loading data...</div>;
         }

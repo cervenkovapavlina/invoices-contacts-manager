@@ -30,53 +30,45 @@ class DjangoClient {
       return cookieValue;
     }
 
-    get = (endpoint, okCallback, errorCallback) => {
+    get = async (endpoint, addAuthenticationHeaders=true) => {
         let url = DjangoClient.BASE_URL + '/' + endpoint;
-        this.debug(url)
-        fetch(url, {
+        this.debug(`GET ${url}`);
+        let headers = {
+            'Content-Type': 'application/json',
+        };
+        if (addAuthenticationHeaders) {
+            headers['Authentication-Token'] = await SessionHelper.getAuthenticationToken();
+        }
+        const response = await fetch(url, {
           method: 'GET',
           credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            'Token': SessionHelper.getToken(),
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message) {
-                throw data.message
-            } else {
-                this.debug(data);
-                okCallback(data);
-            }
-        })
-        .catch(error => errorCallback(error));
+          headers: headers,
+        });
+        if (!response.ok) {
+            console.error(`GET ${url} failed.`);
+        }
+        return response.json()
     }
 
-    post = (endpoint, okCallback, errorCallback, body) => {
+    post = async (endpoint, body, addAuthenticationHeaders=true) => {
         let url = DjangoClient.BASE_URL + '/' + endpoint;
-        this.debug(url)
-        fetch(url, {
+        this.debug(`POST ${url}`);
+        let headers = {'Content-Type': 'application/json'};
+        if (addAuthenticationHeaders){
+            headers['X-CSRFToken'] = await SessionHelper.getCsrfToken();
+            headers['Authentication-Token'] = await SessionHelper.getAuthenticationToken();
+        }
+        const response = await fetch(url, {
           method: 'POST',
           credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': this.getCookie('csrftoken'),
-            'Token': SessionHelper.getToken(),
-          },
+          headers: headers,
           body: JSON.stringify(body),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message) {
-                throw data.message
-            } else {
-                this.debug(data);
-                okCallback(data);
-            }
-        })
-        .catch(error => errorCallback(error));
-    };
+        });
+        if (!response.ok) {
+            console.error(`POST ${url} failed.`);
+        }
+        return response.json()
+    }
 }
 
 export default DjangoClient;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import DataComponentUtil from 'utils/DataComponentUtil';
 import NumberRowModel from "components/number-rows/NumberRowModel";
@@ -10,7 +10,6 @@ const NumberRowDetail = () => {
     const [numberRow, setNumberRow] = useState(null);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
-    const loadedRef = useRef(false);
 
     const mapDataToModel = (data) => {
         let fields = data.fields;
@@ -25,10 +24,7 @@ const NumberRowDetail = () => {
     }
 
     useEffect(() => {
-        if (loadedRef.current === false){
-            loadedRef.current = true;
-            DataComponentUtil.loadData('number_rows/' + id, mapDataToModel, setLoading, setErrorMessage);
-        }
+        DataComponentUtil.loadData('number_rows/' + id, mapDataToModel, setLoading, setErrorMessage);
     }, [id])
 
     const generateNumberRowDetail = () => {
@@ -49,9 +45,9 @@ const NumberRowDetail = () => {
                             value={numberRow.prefix}
                             disabled
                         />
-                        <div className="mb-3 mt-3">
-                          <label className="form-label">Typ faktur:</label>
-                          <div>
+                        <div className="row my-3">
+                          <label className="col-sm-4 col-form-label text-sm-end">Typ faktur</label>
+                          <div className="col-sm-8 my-2">
                             <div className="form-check form-check-inline">
                               <input
                                 className="form-check-input"

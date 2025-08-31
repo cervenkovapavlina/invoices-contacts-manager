@@ -1,7 +1,7 @@
 import random
 import string
 from django.contrib.auth import authenticate
-from tokens.models import Token
+from user_sessions.models import Token, Session
 from django.core.exceptions import PermissionDenied
 
 
@@ -19,3 +19,10 @@ def generate_token(user_name, password):
     token = Token(user=user, token=new_token)
     token.save()
     return token
+
+
+def generate_session(authentication_token, csrf_token):
+    session_id = generate_random_string(16)
+    session = Session(session_id=session_id, authentication_token=authentication_token, csrf_token=csrf_token)
+    session.save()
+    return session

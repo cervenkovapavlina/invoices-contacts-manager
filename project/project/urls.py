@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 import invoices.views as invoices_views
-import tokens.views as tokens_views
+import user_sessions.views as sessions_views
 import contacts.views as contacts_views
 
 urlpatterns = [
@@ -37,6 +37,7 @@ urlpatterns = [
     path("number_rows/create", invoices_views.number_row_prefix_create, name="number_row_prefix_create"),
     path("number_rows/<id>", invoices_views.number_row_prefix_detail, name="number_row_prefix_detail"),
 
-    path("tokens/create", tokens_views.token_create, name="token_create")
+    path("sessions/create", sessions_views.session_create, name="session_create"),
+    path("sessions/<session_id>", sessions_views.session_get, name="session_get")
 
 ]
