@@ -32,15 +32,13 @@ class DjangoClient {
 
     get = async (endpoint, addAuthenticationHeaders=true) => {
         let url = DjangoClient.BASE_URL + '/' + endpoint;
-        console.log(`GET ${url}`);
-        console.log("BBB")
+        this.debug(`GET ${url}`);
         let headers = {
             'Content-Type': 'application/json',
         };
         if (addAuthenticationHeaders) {
             headers['Authentication-Token'] = await SessionHelper.getAuthenticationToken();
         }
-        this.debug(`GET ${url}`)
         const response = await fetch(url, {
           method: 'GET',
           credentials: 'include',
@@ -54,7 +52,7 @@ class DjangoClient {
 
     post = async (endpoint, body, addAuthenticationHeaders=true) => {
         let url = DjangoClient.BASE_URL + '/' + endpoint;
-        this.debug(url);
+        this.debug(`POST ${url}`);
         let headers = {'Content-Type': 'application/json'};
         if (addAuthenticationHeaders){
             headers['X-CSRFToken'] = await SessionHelper.getCsrfToken();
