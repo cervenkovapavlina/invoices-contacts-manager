@@ -29,4 +29,5 @@ jobs:
 
     - name: Run Django tests
       run: |
+        cd project
         python manage.py test
