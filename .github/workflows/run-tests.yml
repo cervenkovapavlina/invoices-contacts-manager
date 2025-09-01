@@ -1,0 +1,32 @@
+# .github/workflows/run-tests.yml
+name: Run Django Tests
+
+on:
+  push:
+    branches:
+      - '**'  # Triggers on push to any branch
+  pull_request:
+    branches:
+      - '**'  # Also runs on PRs (optional but helpful)
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'  # Set your project's Python version
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run Django tests
+      run: |
+        python manage.py test
