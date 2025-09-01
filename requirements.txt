@@ -16,7 +16,6 @@ django-cors-headers==4.7.0
 django-extensions==4.1
 docutils==0.21.2
 geckodriver==0.0.1
-gyp==0.1
 h11==0.16.0
 httplib2==0.20.2
 idna==3.10
@@ -71,5 +70,6 @@ wrapt==1.17.2
 wsproto==1.2.0
 zipp==1.0.0
 zope.interface==7.2
+
 
 
