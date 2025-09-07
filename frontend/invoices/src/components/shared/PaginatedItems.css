@@ -1,0 +1,12 @@
+.pagination li {
+    margin-left: 5px;
+    text-decoration: underline;
+}
+
+.pagination .page {
+    color: #0d6efd;
+}
+
+.pagination .active {
+    font-weight: bold;
+}

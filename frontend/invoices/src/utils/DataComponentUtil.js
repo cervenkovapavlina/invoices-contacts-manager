@@ -1,14 +1,16 @@
 import DjangoClient from "utils/DjangoClient";
+const ITEMS_PER_PAGE = 2;
 
 class DataComponentUtil{
-    static async loadData(endpoint, setData, setLoading, setErrorMessage) {
+    static async loadData(endpoint, setData, setLoading, setErrorMessage, setPageCount) {
         let client = new DjangoClient();
         const data = await client.get(endpoint);
         setLoading(false);
         if (data.message) {
             setErrorMessage(data.message);
         } else {
-            setData(data);
+            setData(data.data);
+            setPageCount(data.count / ITEMS_PER_PAGE);
         }
     }
 

@@ -41,7 +41,15 @@ def index(request):
 
 @secured_endpoint
 def number_row_prefix_list(request):
-    return JsonResponse(serialize('python', NumberRowPrefix.objects.all()), safe=False)
+    const_per_page = 2
+    object_list = NumberRowPrefix.objects.all()  # your queryset
+    paginator = Paginator(object_list, const_per_page)  # Show 10 objects per page
+
+    page_number = request.GET.get('page')  # e.g., ?page=2
+    page_obj = paginator.get_page(page_number)
+    serialized_page_obj = serialize('python', page_obj)
+
+    return JsonResponse({"data": serialized_page_obj, "count": NumberRowPrefix.objects.count()}, safe=False)
 
 
 @secured_endpoint
@@ -80,10 +88,13 @@ def number_row_prefix_create(request):
 
 
 def my_view(request):
+    const_per_page = 2
     object_list = NumberRowPrefix.objects.all()  # your queryset
-    paginator = Paginator(object_list, 2)  # Show 10 objects per page
+    paginator = Paginator(object_list, const_per_page)  # Show 10 objects per page
 
     page_number = request.GET.get('page')  # e.g., ?page=2
     page_obj = paginator.get_page(page_number)
+    serialized_page_obj = serialize('python', page_obj)
 
-    return JsonResponse(serialize('python', page_obj), safe=False)
+    return JsonResponse({"data": serialized_page_obj, "count": NumberRowPrefix.objects.count()}, safe=False)
+
