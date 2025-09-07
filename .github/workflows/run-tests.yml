@@ -5,9 +5,6 @@ on:
   push:
     branches:
       - '**'  # Triggers on push to any branch
-  pull_request:
-    branches:
-      - '**'  # Also runs on PRs (optional but helpful)
 
 jobs:
   test:
