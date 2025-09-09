@@ -57,7 +57,7 @@ def number_row_prefix_detail(request, id):
     try:
         number_row_prefix = NumberRowPrefix.objects.get(id=id)
         data = serialize('python', [number_row_prefix])
-        return JsonResponse(data[0], safe=False)
+        return JsonResponse({"data": data[0]}, safe=False)
     except:
         error_message = "Not found."
         Logger.error(__name__, error_message)
