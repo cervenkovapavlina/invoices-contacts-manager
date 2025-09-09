@@ -13,6 +13,8 @@ from functools import wraps
 from user_sessions.models import Token
 from django.db.utils import IntegrityError
 from invoices.utils.Logger import Logger
+from django.core.paginator import Paginator
+from django.shortcuts import render
 
 # Create your views here.
 
@@ -39,7 +41,15 @@ def index(request):
 
 @secured_endpoint
 def number_row_prefix_list(request):
-    return JsonResponse(serialize('python', NumberRowPrefix.objects.all()), safe=False)
+    const_per_page = 2
+    object_list = NumberRowPrefix.objects.all()  # your queryset
+    paginator = Paginator(object_list, const_per_page)  # Show 10 objects per page
+
+    page_number = request.GET.get('page')  # e.g., ?page=2
+    page_obj = paginator.get_page(page_number)
+    serialized_page_obj = serialize('python', page_obj)
+
+    return JsonResponse({"data": serialized_page_obj, "count": NumberRowPrefix.objects.count()}, safe=False)
 
 
 @secured_endpoint
@@ -47,7 +57,7 @@ def number_row_prefix_detail(request, id):
     try:
         number_row_prefix = NumberRowPrefix.objects.get(id=id)
         data = serialize('python', [number_row_prefix])
-        return JsonResponse(data[0], safe=False)
+        return JsonResponse({"data": data[0]}, safe=False)
     except:
         error_message = "Not found."
         Logger.error(__name__, error_message)
@@ -76,4 +86,15 @@ def number_row_prefix_create(request):
     Logger.error(__name__, error_message)
     return JsonResponse({"message": error_message}, status=405)
 
+
+def my_view(request):
+    const_per_page = 2
+    object_list = NumberRowPrefix.objects.all()  # your queryset
+    paginator = Paginator(object_list, const_per_page)  # Show 10 objects per page
+
+    page_number = request.GET.get('page')  # e.g., ?page=2
+    page_obj = paginator.get_page(page_number)
+    serialized_page_obj = serialize('python', page_obj)
+
+    return JsonResponse({"data": serialized_page_obj, "count": NumberRowPrefix.objects.count()}, safe=False)
 

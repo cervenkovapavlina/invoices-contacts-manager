@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db.utils import IntegrityError
 from invoices.utils.Logger import Logger
 from contacts.services.contact_service import ContactService
+from django.middleware.csrf import get_token
 
 
 @secured_endpoint
@@ -67,3 +68,9 @@ def contact_update(request, id):
         error_message = "Save failed."
         Logger.error(__name__, f"{error_message} {e}")
         return JsonResponse({"message": error_message}, status=400)
+
+
+# TODO remove
+def get_csrf_token(request):
+    token = get_token(request)
+    return JsonResponse({"token": token})
