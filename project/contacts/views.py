@@ -1,6 +1,5 @@
-from invoices.views import secured_endpoint
+from contacts.shared.views_helper import secured_endpoint
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers import serialize
 from contacts.models import Contact
 from django.core.exceptions import ValidationError
@@ -8,6 +7,7 @@ from django.db.utils import IntegrityError
 from invoices.utils.Logger import Logger
 from contacts.services.contact_service import ContactService
 from django.middleware.csrf import get_token
+
 
 
 @secured_endpoint
