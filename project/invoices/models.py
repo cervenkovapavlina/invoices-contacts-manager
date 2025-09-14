@@ -4,16 +4,7 @@ from django.db.models import UniqueConstraint
 from django.utils import timezone
 from datetime import datetime
 from django.core.validators import MinLengthValidator
-
-
-# Create your models here.
-
-
-# class Invoice(models.Model):
-#     id = models.AutoField(primary_key=True)
-#     created = models.DateTimeField(default=timezone.now)
-#     variable_symbol = models.CharField(max_length=50)
-
+from contacts.models import Contact
 
 class Entity(models.Model):
     id = models.AutoField(primary_key=True)
@@ -54,5 +45,22 @@ class NumberRowValue(Entity):
         super(NumberRowValue, self).save(*args, **kwargs)
 
 
+class InvoiceBase(Entity):
+    number_row_value = models.ForeignKey(NumberRowValue, on_delete=models.CASCADE, null=False)
+    variable_symbol = models.CharField(max_length=50, null=False)
+    issue_date = models.DateField()
+    taxable_supply_date = models.DateField()
+    due_date = models.DateField()
+    customer_contact = models.ForeignKey(Contact, on_delete=models.CASCADE, null=False)
+    supplier_contact = models.ForeignKey(Contact, on_delete=models.CASCADE, null=False)
+    invoice_note = models.CharField(max_length=500)
 
 
+class ReceivedInvoice(InvoiceBase):
+    reference_number = models.CharField(max_length=50, null=False)
+    delivery_date = models.DateField()
+    # customer/supplier
+
+
+class IssuedInvoice(InvoiceBase):
+    pass
