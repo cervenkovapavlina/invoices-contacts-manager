@@ -7,6 +7,7 @@ from invoices.utils.Logger import Logger
 from django.middleware.csrf import get_token
 from user_sessions.models import Session
 from urllib.parse import unquote
+from contacts.shared.response_factory import ResponseFactory
 
 
 @csrf_exempt
@@ -27,10 +28,10 @@ def session_create(request):
         except Exception as e:
             error_message = f"Invalid input. Required data not provided. {e}"
             Logger.error(__name__, error_message)
-            return JsonResponse({"message": error_message}, status=400)
+            return ResponseFactory.message(error_message, 400)
     error_message = "Method not allowed."
     Logger.error(__name__, error_message)
-    return JsonResponse({"message": error_message}, status=405)
+    return ResponseFactory.message(error_message, 405)
 
 
 @csrf_exempt
@@ -45,5 +46,4 @@ def session_get(request, session_id):
     except Exception as e:
         error_message = f"Incorrect session_id."
         Logger.error(__name__, error_message)
-        return JsonResponse({"message": error_message}, status=400)
-
+        return ResponseFactory.message(error_message, 400)

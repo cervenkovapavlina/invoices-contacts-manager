@@ -43,19 +43,15 @@ def number_row_prefix_create(request):
             number_row_prefix = NumberRowPrefix(prefix=filled_data["prefix"], name=filled_data["name"],
                                                 received=filled_data["received"])
             number_row_prefix.save()
-            return JsonResponse({"id": number_row_prefix.id})
+            return ResponseFactory.id(number_row_prefix.id)
         except ValidationError as e:
             error_message = f"Invalid input. Required data not provided. {e.messages}"
             Logger.error(__name__, error_message)
-            return JsonResponse({"message": error_message}, status=400)
+            return ResponseFactory.message(error_message, 400)
         except IntegrityError as e:
             error_message = "Save failed."
             Logger.error(__name__, f"{error_message} {e}")
-            return JsonResponse({"message": error_message}, status=400)
+            return ResponseFactory.message(error_message, 400)
     error_message = "Method not allowed."
     Logger.error(__name__, error_message)
-    return JsonResponse({"message": error_message}, status=405)
-
-
-
-
+    return ResponseFactory.message(error_message, 405)

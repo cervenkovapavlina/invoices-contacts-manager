@@ -23,7 +23,7 @@ def secured_endpoint(endpoint):
 
 
 def paginate_response(model, page_number):
-    items_per_page = 2
+    items_per_page = 10
     object_list = model.objects.all()
     paginator = Paginator(object_list, items_per_page)
     page_items = paginator.get_page(page_number)

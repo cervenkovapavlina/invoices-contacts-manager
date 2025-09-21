@@ -18,5 +18,3 @@ class ResponseFactory:
     @staticmethod
     def id(id):
         return JsonResponse({"id": id})
-
-    # TODO change reposnses in all views
