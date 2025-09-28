@@ -1,0 +1,7 @@
+{
+    "welcome": "Vitejte!",
+    "greeting": "Ahoj, {{name}}!",
+    "received": "Přijaté",
+    "issued": "Vydané",
+    "invoice_number_rows": "Číselné řady faktur"
+}

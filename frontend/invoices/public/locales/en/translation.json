@@ -1,0 +1,7 @@
+{
+    "welcome": "Welcome!",
+    "greeting": "Hello, {{name}}!",
+    "received": "Received",
+    "issued": "Issued",
+    "invoice_number_rows": "Invoice number rows"
+}

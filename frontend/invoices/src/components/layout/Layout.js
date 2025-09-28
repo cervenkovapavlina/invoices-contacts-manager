@@ -1,4 +1,7 @@
 import { Outlet, Link } from "react-router-dom";
+import i18n from 'utils/i18n';
+import { useTranslation } from 'react-i18next';
+import "./Layout.css";
 
 const Layout = ({ isAuthenticated }) => {
   const links = isAuthenticated ? [
@@ -8,9 +11,18 @@ const Layout = ({ isAuthenticated }) => {
     {"url":"/logout", "name":"Odhlásit se"}]
    : [{"url":"/login", "name":"Přihlásit se"}];
 
+  const { t } = useTranslation();
+  const changeLanguage = (language) => {
+    i18n.changeLanguage(language);
+  };
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <ul className="localization">
+            <li><button onClick={() => changeLanguage('en')}>English</button></li>
+            <li><button onClick={() => changeLanguage('cz')}>Cesky</button></li>
+        </ul>
         <div className="container-fluid">
           <button
             className="navbar-toggler"
@@ -20,6 +32,7 @@ const Layout = ({ isAuthenticated }) => {
           >
             <span className="navbar-toggler-icon"></span>
           </button>
+
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto">
                 {links.map((item) => (

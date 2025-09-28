@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NumberRowModel from "components/number-rows/NumberRowModel";
 import DataComponentUtil from 'utils/DataComponentUtil';
+import { useTranslation } from 'react-i18next';
 
 const NumberRowList = () => {
     const [numberRows, setNumberRows] = useState([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const mapDataToModel = (data) => {
         let newNumberRowList = [];
@@ -26,7 +28,7 @@ const NumberRowList = () => {
     }
 
     const getInvoiceType = (received) => {
-        return received ? "Přijaté" : "Vydané";
+        return received ? t("received") : t("issued");
     }
 
     const handleClick = () => {
@@ -43,7 +45,7 @@ const NumberRowList = () => {
                 <div className="row">
                     <div className="col-lg-3"></div>
                     <div className="col-lg-6">
-                        <h1>Číselné řady faktur</h1>
+                        <h1>{t("invoice_number_rows")}</h1>
                     </div>
                     <div className="col-lg-3 my-2">
                         <button className="btn btn-primary" onClick={handleClick}>Přidat číselnou řadu</button>

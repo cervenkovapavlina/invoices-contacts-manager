@@ -1,0 +1,9 @@
+.localization {
+    list-style-type: none;
+    display: flex;
+    margin-left: 10px;
+}
+
+ul .localization li {
+    margin-left: 10px;
+}
