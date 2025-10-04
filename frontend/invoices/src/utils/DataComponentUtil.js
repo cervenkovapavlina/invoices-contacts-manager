@@ -4,26 +4,26 @@ const ITEMS_PER_PAGE = 10;
 class DataComponentUtil{
     static async loadData(endpoint, setData, setLoading, setErrorMessage, setPageCount = null) {
         let client = new DjangoClient();
-        const data = await client.get(endpoint);
+        const response = await client.get(endpoint);
         setLoading(false);
-        if (data.message) {
-            setErrorMessage(data.message);
+        if (response.message) {
+            setErrorMessage(response.message);
         } else {
-            setData(data.data);
-            if (setPageCount && data.count) {
-                setPageCount(data.count / ITEMS_PER_PAGE);
+            setData(response.data);
+            if (setPageCount && response.count) {
+                setPageCount(response.count / ITEMS_PER_PAGE);
             }
         }
     }
 
     static async sendData(endpoint, body, navigate, redirectUrl, setLoading, setErrorMessage) {
         let client = new DjangoClient();
-        const data = await client.post(endpoint, body);
+        const response = await client.post(endpoint, body);
         setLoading(false);
-        if (data.message) {
-            setErrorMessage(data.message);
+        if (response.message) {
+            setErrorMessage(response.message);
         } else {
-            navigate(`/${redirectUrl}/${data.id}`);
+            navigate(`/${redirectUrl}/${response.id}`);
         }
     }
 

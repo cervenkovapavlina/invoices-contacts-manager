@@ -38,9 +38,6 @@ urlpatterns = [
     path("number_rows/<id>", invoices_views.number_row_prefix_detail, name="number_row_prefix_detail"),
 
     path("sessions/create", sessions_views.session_create, name="session_create"),
-    path("sessions/<session_id>", sessions_views.session_get, name="session_get"),
-
-    # TODO remove
-    path("get_token", contacts_views.get_csrf_token, name="get_csrf_token")
+    path("sessions/<session_id>", sessions_views.session_get, name="session_get")
 
 ]

@@ -10,7 +10,6 @@ import NumberRowDetail from 'components/number-rows/NumberRowDetail';
 import NumberRowForm from 'components/number-rows/NumberRowForm';
 import IssuedInvoiceList from 'components/issued-invoices/IssuedInvoiceList';
 import IssuedInvoiceDetail from 'components/issued-invoices/IssuedInvoiceDetail';
-import PaginatedItems from 'components/shared/PaginatedItems';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React, { useState } from 'react';
 
@@ -67,14 +66,6 @@ const App = () => {
                   element={
                     <PrivateRoute isAuthenticated={isAuthenticated}>
                       <IssuedInvoiceDetail />
-                    </PrivateRoute>
-                  }
-                />
-                 <Route
-                  path="/my_view"
-                  element={
-                    <PrivateRoute isAuthenticated={isAuthenticated}>
-                      <PaginatedItems />
                     </PrivateRoute>
                   }
                 />

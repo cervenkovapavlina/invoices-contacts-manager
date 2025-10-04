@@ -71,9 +71,3 @@ def contact_update(request, id):
         error_message = "Save failed."
         Logger.error(__name__, f"{error_message} {e}")
         return ResponseFactory.message(error_message, 400)
-
-
-# TODO remove
-def get_csrf_token(request):
-    token = get_token(request)
-    return JsonResponse({"token": token})

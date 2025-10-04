@@ -18,3 +18,11 @@ class ResponseFactory:
     @staticmethod
     def id(id):
         return JsonResponse({"id": id})
+
+    @staticmethod
+    def session(session):
+        return JsonResponse({
+            "session_id": session.session_id,
+            "authentication_token": session.authentication_token.token,
+            "csrf_token": session.csrf_token
+        })
