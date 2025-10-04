@@ -15,8 +15,8 @@ const IssuedInvoiceDetail = () => {
         setLoading(false)
     }
 
-    useEffect(async ()=>{
-        await loadData();
+    useEffect(()=>{
+        loadData();
     }, [])
 
     if (loading) {
